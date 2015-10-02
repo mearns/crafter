@@ -92,4 +92,15 @@ public class ListBuilderTest {
         assertArrayEquals("Expected addAll(Iterator<T>) to add the given items to the list.", expected.toArray(), uut.get().toArray());
     }
 
+    @Test
+    public void testAddAll_Iterator_Builder_T() throws Exception {
+        final String[] expected = new String[]{"carrots", "cars", "cauliflower"};
+        final List<? extends Builder<String>> builders = Lists.transform(Arrays.asList(expected), ValueBuilder.<String>ofInstanceFunction());
+        ListBuilder<String> uut = ListBuilder.create();
+        ListBuilder<String> res = uut.addBuilders(builders.iterator());
+
+        assertSame("Expect value returned by add(T) is the original builder.", uut, res);
+        assertArrayEquals("Expected addAll(Iterator<T>) to add the given items to the list.", expected, uut.get().toArray());
+    }
+
 }
