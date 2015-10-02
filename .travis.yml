@@ -1,12 +1,13 @@
 language: java
 jdk:
   - oraclejdk7
-  - oraclejdk8
+  #Not yet supported by findbugs.
+  #- oraclejdk8
   - openjdk7
 
 #Needed to avoid a problem in travis CI with permission for gradlew.
 before_install:
  - chmod +x gradlew
 
-script: ./gradlew check --debug
+#script: ./gradlew check --debug
 
