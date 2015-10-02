@@ -36,7 +36,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_ -> !null")
-    protected abstract ListBuilder<T> add(@NotNull Supplier<T> element);
+    protected abstract ListBuilder<T> add(@NotNull Supplier<? extends T> element);
 
     /**
      * Helper method for adding an iterable of suppliers of elements.
@@ -47,7 +47,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_ -> !null")
-    protected abstract ListBuilder<T> addSuppliers(@NotNull Iterable<Supplier<T>> elements);
+    protected abstract ListBuilder<T> addSuppliers(@NotNull Iterable<? extends Supplier<? extends T>> elements);
 
     /**
      * Helper method for adding an iterator of suppliers of elements.
@@ -58,7 +58,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_ -> !null")
-    protected abstract ListBuilder<T> addSuppliers(@NotNull Iterator<Supplier<T>> elements);
+    protected abstract ListBuilder<T> addSuppliers(@NotNull Iterator<? extends Supplier<? extends T>> elements);
 
     /**
      * Helper method for adding an array of suppliers of elements.
@@ -68,7 +68,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      * @return {@code this} object itself, for chaining convenience.
      */
     @NotNull
-    protected abstract ListBuilder<T> addSuppliers(@NotNull Supplier<T>[] elements);
+    protected abstract ListBuilder<T> addSuppliers(@NotNull Supplier<? extends T>[] elements);
 
     /**
      * Helper method to add the given element, if and only if the given boolean is {@code true}. Otherwise
@@ -81,7 +81,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_, _ -> !null")
-    protected abstract ListBuilder<T> maybeAdd(@NotNull Supplier<T> element, boolean add);
+    protected abstract ListBuilder<T> maybeAdd(@NotNull Supplier<? extends T> element, boolean add);
 
     /**
      * Add all of the given elements, in order, to the list of values.
@@ -96,7 +96,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_ -> !null")
-    public ListBuilder<T> addAll(@NotNull Iterable<T> elements) {
+    public ListBuilder<T> addAll(@NotNull Iterable<? extends T> elements) {
         return addSuppliers(Iterables.transform(elements, SupplierFunctions.<T>supplierOfInstanceFunction()));
     }
 
@@ -117,8 +117,8 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_ -> !null")
-    public ListBuilder<T> addBuilders(@NotNull Iterable<Builder<T>> elements) {
-        return addSuppliers(Iterables.transform(elements, SupplierFunctions.<T>builderToSupplierFunction()));
+    public ListBuilder<T> addBuilders(@NotNull Iterable<? extends Builder<? extends T>> elements) {
+        return addSuppliers(elements);
     }
 
     /**
@@ -134,7 +134,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_ -> !null")
-    public ListBuilder<T> addAll(@NotNull Iterator<T> elements) {
+    public ListBuilder<T> addAll(@NotNull Iterator<? extends T> elements) {
         return addSuppliers(Iterators.transform(elements, SupplierFunctions.<T>supplierOfInstanceFunction()));
     }
 
@@ -155,8 +155,8 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_ -> !null")
-    public ListBuilder<T> addBuilders(@NotNull Iterator<Builder<T>> elements) {
-        return addSuppliers(Iterators.transform(elements, SupplierFunctions.<T>builderToSupplierFunction()));
+    public ListBuilder<T> addBuilders(@NotNull Iterator<? extends Builder<? extends T>> elements) {
+        return addSuppliers(elements);
     }
 
     /**
@@ -193,8 +193,8 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_ -> !null")
-    public ListBuilder<T> addBuilders(@NotNull Builder<T>[] elements) {
-        return addSuppliers(Iterables.transform(Arrays.asList(elements), SupplierFunctions.<T>builderToSupplierFunction()));
+    public ListBuilder<T> addBuilders(@NotNull Builder<? extends T>[] elements) {
+        return addSuppliers(elements);
     }
 
     /**
@@ -221,8 +221,8 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_ -> !null")
-    public ListBuilder<T> add(@NotNull Builder<T> elementBuilder) {
-        return add((Supplier<T>) elementBuilder);
+    public ListBuilder<T> add(@NotNull Builder<? extends T> elementBuilder) {
+        return add((Supplier<? extends T>) elementBuilder);
     }
 
     /**
@@ -261,11 +261,11 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_, _ -> !null")
-    public ListBuilder<T> maybeAdd(@NotNull Builder<T> element, boolean add) {
-        return maybeAdd((Supplier<T>) element, add);
+    public ListBuilder<T> maybeAdd(@NotNull Builder<? extends T> element, boolean add) {
+        return maybeAdd((Supplier<? extends T>) element, add);
     }
 
-    public abstract ListBuilder<T> apply(@NotNull Function<? super ListBuilder<T>, Void> function);
+    public abstract ListBuilder<T> apply(@NotNull Function<? super ListBuilder<? extends T>, Void> function);
 
     /**
      * Returns the top-level non-conditional builder.
@@ -293,7 +293,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
     protected static class DefaultListBuilder<T> extends ListBuilder<T> {
 
         @NotNull
-        private final List<Supplier<T>> elements;
+        private final List<Supplier<? extends T>> elements;
 
         @NotNull
         private final ListBuilder<T> parent;
@@ -333,9 +333,9 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
          */
         @NotNull
         @Contract("_ -> !null")
-        protected List<T> get(@NotNull ImmutableList<Supplier<T>> suppliers) {
+        protected List<T> get(@NotNull ImmutableList<Supplier<? extends T>> suppliers) {
             ArrayList<T> list = new ArrayList<>(suppliers.size());
-            for (Supplier<T> supplier : suppliers) {
+            for (Supplier<? extends T> supplier : suppliers) {
                 list.add(supplier.get());
             }
             return list;
@@ -344,7 +344,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         @Override
         @NotNull
         @Contract("_ -> !null")
-        protected ListBuilder<T> add(@NotNull Supplier<T> element) {
+        protected ListBuilder<T> add(@NotNull Supplier<? extends T> element) {
             elements.add(element);
             return this;
         }
@@ -352,7 +352,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         @Override
         @NotNull
         @Contract("_ -> !null")
-        protected ListBuilder<T> addSuppliers(@NotNull Iterable<Supplier<T>> elements) {
+        protected ListBuilder<T> addSuppliers(@NotNull Iterable<? extends Supplier<? extends T>> elements) {
             Iterables.addAll(this.elements, elements);
             return this;
         }
@@ -360,7 +360,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         @Override
         @NotNull
         @Contract("_ -> !null")
-        protected ListBuilder<T> addSuppliers(@NotNull Iterator<Supplier<T>> elements) {
+        protected ListBuilder<T> addSuppliers(@NotNull Iterator<? extends Supplier<? extends T>> elements) {
             while(elements.hasNext()) {
                 this.elements.add(elements.next());
             }
@@ -369,14 +369,14 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
 
         @Override
         @NotNull
-        protected ListBuilder<T> addSuppliers(@NotNull Supplier<T>[] elements) {
+        protected ListBuilder<T> addSuppliers(@NotNull Supplier<? extends T>[] elements) {
             return addSuppliers(Arrays.asList(elements));
         }
 
         @Override
         @NotNull
         @Contract("_, _ -> !null")
-        protected ListBuilder<T> maybeAdd(@NotNull Supplier<T> element, boolean add) {
+        protected ListBuilder<T> maybeAdd(@NotNull Supplier<? extends T> element, boolean add) {
             if(add) {
                 this.add(element);
             }
@@ -400,7 +400,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         @Override
         @NotNull
         @Contract("_ -> !null")
-        public ListBuilder<T> apply(@NotNull Function<? super ListBuilder<T>, Void> function) {
+        public ListBuilder<T> apply(@NotNull Function<? super ListBuilder<? extends T>, Void> function) {
             function.apply(this);
             return this;
         }
@@ -470,31 +470,31 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
 
         @Override
         @Contract(pure=true)
-        protected ListBuilder<T> add(@NotNull Supplier<T> element) {
+        protected ListBuilder<T> add(@NotNull Supplier<? extends T> element) {
             return this;
         }
 
         @Override
         @Contract(pure=true)
-        protected ListBuilder<T> addSuppliers(@NotNull Iterable<Supplier<T>> elements) {
+        protected ListBuilder<T> addSuppliers(@NotNull Iterable<? extends Supplier<? extends T>> elements) {
             return this;
         }
 
         @Override
         @Contract(pure=true)
-        protected ListBuilder<T> addSuppliers(@NotNull Iterator<Supplier<T>> elements) {
+        protected ListBuilder<T> addSuppliers(@NotNull Iterator<? extends Supplier<? extends T>> elements) {
             return this;
         }
 
         @Override
         @Contract(pure=true)
-        protected ListBuilder<T> addSuppliers(@NotNull Supplier<T>[] elements) {
+        protected ListBuilder<T> addSuppliers(@NotNull Supplier<? extends T>[] elements) {
             return this;
         }
 
         @Override
         @Contract(pure=true)
-        protected ListBuilder<T> maybeAdd(@NotNull Supplier<T> element, boolean add) {
+        protected ListBuilder<T> maybeAdd(@NotNull Supplier<? extends T> element, boolean add) {
             return this;
         }
 
@@ -503,7 +503,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
          * itself, so any methods the function invokes on the builder have no impact.
          */
         @Override
-        public ListBuilder<T> apply(@NotNull Function<? super ListBuilder<T>, Void> function) {
+        public ListBuilder<T> apply(@NotNull Function<? super ListBuilder<? extends T>, Void> function) {
             function.apply(this);
             return this;
         }

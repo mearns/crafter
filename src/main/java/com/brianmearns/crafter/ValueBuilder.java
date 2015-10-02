@@ -16,6 +16,30 @@ import javax.validation.constraints.NotNull;
 @SuppressWarnings("unused")
 public class ValueBuilder<T> implements Builder<T> {
 
+    @NotNull
+    @Contract("_ -> !null")
+    public static <T> ValueBuilder<T> ofInstance(T value) {
+        return new ValueBuilder<>(value);
+    }
+
+    @NotNull
+    @Contract("_ -> !null")
+    public static <T> ValueBuilder<T> ofBuilder(Builder<T> value) {
+        return new ValueBuilder<>(value);
+    }
+
+    @NotNull
+    @Contract(" -> !null")
+    public static <T> Function<Builder<T>, ValueBuilder<T>> ofBuilderFunction() {
+        return new ValueBuilderOfBuilderFunction<>();
+    }
+
+    @NotNull
+    @Contract(" -> !null")
+    public static <T> Function<T, ValueBuilder<T>> ofInstanceFunction() {
+        return new ValueBuilderOfInstanceFunction<>();
+    }
+
     /**
      * A supplier for the value. Suppliers are used to encapsulate the fact that you can
      * set the value using either a value directly, or a builder for the value.
@@ -109,5 +133,27 @@ public class ValueBuilder<T> implements Builder<T> {
     @Override
     public T get() {
         return value == null ? null : value.get();
+    }
+
+    /**
+     * A function that maps any value to a {@link ValueBuilder} {@linkplain #ofInstance(Object) of that instance}.
+     */
+    protected static class ValueBuilderOfInstanceFunction<T> implements Function<T, ValueBuilder<T>> {
+        @Nullable
+        @Override
+        public ValueBuilder<T> apply(@Nullable T input) {
+            return ofInstance(input);
+        }
+    }
+
+    /**
+     * A function that maps any builder of a value to a {@link ValueBuilder} {@linkplain #ofBuilder(Builder) of that builder}.
+     */
+    protected static class ValueBuilderOfBuilderFunction<T> implements Function<Builder<T>, ValueBuilder<T>> {
+        @Nullable
+        @Override
+        public ValueBuilder<T> apply(@Nullable Builder<T> input) {
+            return ofBuilder(input);
+        }
     }
 }
