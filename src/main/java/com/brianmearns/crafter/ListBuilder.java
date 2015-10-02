@@ -22,6 +22,12 @@ import java.util.*;
 @SuppressWarnings("unused")
 public abstract class ListBuilder<T> implements Builder<List<T>> {
 
+    @NotNull
+    @Contract("-> !null")
+    public static <T> ListBuilder<T> create() {
+        return new DefaultListBuilder<>();
+    }
+
     /**
      * Helper method for adding an element as a supplier of that element.
      * @param element Supplier of the element to add.
