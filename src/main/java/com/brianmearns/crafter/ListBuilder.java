@@ -28,6 +28,12 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         return new DefaultListBuilder<>();
     }
 
+    @NotNull
+    @Contract("_ -> !null")
+    public static <T> ListBuilder<T> create(Class<T> cls) {
+        return new DefaultListBuilder<>();
+    }
+
     /**
      * Helper method for adding an element as a supplier of that element.
      * @param element Supplier of the element to add.
@@ -265,7 +271,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         return maybeAdd((Supplier<? extends T>) element, add);
     }
 
-    public abstract ListBuilder<T> apply(@NotNull Function<? super ListBuilder<? extends T>, Void> function);
+    public abstract ListBuilder<T> apply(@NotNull Function<ListBuilder<T>, Void> function);
 
     /**
      * Returns the top-level non-conditional builder.
@@ -400,7 +406,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         @Override
         @NotNull
         @Contract("_ -> !null")
-        public ListBuilder<T> apply(@NotNull Function<? super ListBuilder<? extends T>, Void> function) {
+        public ListBuilder<T> apply(@NotNull Function<ListBuilder<T>, Void> function) {
             function.apply(this);
             return this;
         }
@@ -503,7 +509,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
          * itself, so any methods the function invokes on the builder have no impact.
          */
         @Override
-        public ListBuilder<T> apply(@NotNull Function<? super ListBuilder<? extends T>, Void> function) {
+        public ListBuilder<T> apply(@NotNull Function<ListBuilder<T>, Void> function) {
             function.apply(this);
             return this;
         }
