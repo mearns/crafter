@@ -57,4 +57,19 @@ public class MapBuilderTest {
         assertEquals("Expected specified value to be mapped to 3:", "---", map.get(3));
     }
 
+    @Test
+    public void test_maybe_put_false() {
+        MapBuilder<Integer, String> uut = MapBuilder.create(Integer.class, String.class);
+        MapBuilder<Integer, String> res = uut.put(1, "andromeda")
+                .maybePut(2, "Saphron", false)
+                .put(3, "---");
+        Map<Integer, String> map = res.get();
+
+        assertSame("Expected return value of put(K,V) to be the same as the original object.", uut, res);
+        assertEquals("Expected map to have specified size.", 2, map.size());
+        assertEquals("Expected map to have specified key set.", new HashSet<>(ImmutableList.of(1, 3)), map.keySet());
+        assertEquals("Expected specified value to be mapped to 1:", "andromeda", map.get(1));
+        assertEquals("Expected specified value to be mapped to 3:", "---", map.get(3));
+    }
+
 }
