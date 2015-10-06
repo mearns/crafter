@@ -68,6 +68,14 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
         return this;
     }
 
+    public MapBuilder<K,V> maybePut(@Nullable K key, @Nullable V value, boolean put) {
+        if(put) {
+            putSupplier(key, Suppliers.ofInstance(value));
+        }
+        return this;
+    }
+
+
 
 
     protected static class DefaultMapBuilder<K, V> extends MapBuilder<K, V> {
