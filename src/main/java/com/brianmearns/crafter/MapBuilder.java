@@ -51,6 +51,25 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
         return this;
     }
 
+    /**
+     * Put a value in the builder's map, represented by a Builder of that value.
+     *
+     * <p>
+     * Note that the given Builder is not {@linkplain Builder#get() invoked} to build the value
+     * right away, it is invoked once for each call to {@link #get()}.
+     *
+     * @param key The key at which to put the {@code value}.
+     * @param value The value to put at the given {@code key}.
+     *
+     * @return This builder instance itself, for chaining convenience.
+     */
+    public MapBuilder<K,V> put(@Nullable K key, @NotNull Builder<V> value) {
+        putSupplier(key, value);
+        return this;
+    }
+
+
+
     protected static class DefaultMapBuilder<K, V> extends MapBuilder<K, V> {
         @NotNull
         List<Entry<K,V>> entries;
