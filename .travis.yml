@@ -10,9 +10,15 @@ jdk:
   #- oraclejdk8
   - openjdk7
 
-#Needed to avoid a problem in travis CI with permission for gradlew.
 before_install:
- - chmod +x gradlew
+  #Needed to avoid a problem in travis CI with permission for gradlew.
+  - chmod +x gradlew
+  #Install tool for publishing jacoco reports to codecov.io
+  - pip install --user codecov
+
+after_success:
+  #Publish reports to codecov.io
+  - codecov
 
 #script: ./gradlew check --debug
 
