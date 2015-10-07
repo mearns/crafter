@@ -44,13 +44,13 @@ public class ValueBuilder<T> implements Builder<T> {
      * A supplier for the value. Suppliers are used to encapsulate the fact that you can
      * set the value using either a value directly, or a builder for the value.
      */
-    @Nullable
+    @NotNull
     private Supplier<T> value;
 
     /**
      * Create a new instance and {@linkplain #set(Object) set} the value to the given {@code value}.
      */
-    public ValueBuilder(T value) {
+    public ValueBuilder(@Nullable T value) {
         set(value);
     }
 
@@ -132,7 +132,7 @@ public class ValueBuilder<T> implements Builder<T> {
     @Nullable
     @Override
     public T get() {
-        return value == null ? null : value.get();
+        return value.get();
     }
 
     /**
