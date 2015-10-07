@@ -26,18 +26,18 @@ before_install:
 
 after_success:
   #Publish reports to codecov.io
-  # - codecov
+  - codecov
   - .travis/publish.sh
 
 #script: ./gradlew check --debug
-script: ./gradlew javadoc
+script: ./gradlew check javadoc
 
-# addons:
-#   coverity_scan:
-#     project:
-#       name: "mearns/crafter"
-#       description: "A java library to support implementing the builder pattern."
-#     notification_email: bmearns@ieee.org
-#     build_command_prepend: "./gradlew clean"
-#     build_command:   "./gradlew assemble"
-#     branch_pattern: master
+addons:
+  coverity_scan:
+    project:
+      name: "mearns/crafter"
+      description: "A java library to support implementing the builder pattern."
+    notification_email: bmearns@ieee.org
+    build_command_prepend: "./gradlew clean"
+    build_command:   "./gradlew assemble"
+    branch_pattern: master
