@@ -30,7 +30,7 @@ after_success:
   - .travis/publish.sh
 
 #script: ./gradlew check --debug
-script: ./gradlew check javadoc
+script: ./gradlew javadoc
 
 addons:
   coverity_scan:
