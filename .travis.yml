@@ -20,6 +20,7 @@ jdk:
 before_install:
   #Needed to avoid a problem in travis CI with permission for gradlew.
   - chmod +x gradlew
+  - chmod +x .travis/publish.sh
   #Install tool for publishing jacoco reports to codecov.io
   - pip install --user codecov
 
