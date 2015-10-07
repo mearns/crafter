@@ -2,6 +2,13 @@ env:
   global:
     # encrypted COVERITY_SCAN_TOKEN
     - secure: "IedgEcKFcXesKjwR/gCGLW3FT1i8WfpKWmSQwXe/Shp8yRRM3b6NRjWZGJqzxfZ/aXzzkS6NMJm1kE1FHLfELjqaSEyxjGGgyBHUz7mS1wV4hSke1JNn67tbUx/JZKGfng/qMineSKLB+fdjIDzi/tkTNDxlXvHD1X80D/HNGSeaxO7/23z4JfoXYma2MXoIJyP+00NE0hLlncZy5Jwba3oohDp+BOwJd1IMBefk6wK3Vo+cyLKKpL06CLClxT1jqO/uDXSvtgODxEzyE1d48P5GFOQWOPPWM9wqbTGqE6mVFpwZcWZXg+kJiJQ0cvk0QXqSG8rYijiOa4rMuTgj56sR3n15QhQ5cYLu06ECnrgE7iP8thVlFP4JsojHXcn202Klb6bV5CYBhY0URoBHqBkQbs4b1T5ngsyJqAQio3UbaMd3ya2UqDKkUtf9DWNWq4FT38UNXZJO/94oz5zF7y4XguerFVbV/cAloxMeh86OdZKHnmfwxOoxOUi11hePH+579CQZtZHYH3s7x/fPFJJzl1tnwH8PSbxvQU9BZFw/g6/UrGulkMvBBGX/UfnlsUTsDUvYiWhUTCxrMe2xql6w18NBYAq9uFYxR1uRghv34/eI92Ua2bCsU8sqFBqdGhDOzyfRoUyD1283YJDYxeAx0hFeoUX9CEJrlWk+j/k="
+  # Encrypted Github token
+  secure: "jI6TybBu16E9sOc35YsebKUwwWQ/B9nRIUc5HTkU4xeV+mDa+d2BLopDFE69iS5HJ3tcStP/PNEFlxQ/gpiaOTD0TpbK6dAStvySXf2oOlNdv
+83/fK8tDP4whHrR5GmQ+U8XXDdJj4WZrZR2s+xaglVfMFPeTYWga/NAp0DqKmAB1mSq7HogbgeLlv2pRKj4/sm02KmjPX50y7fjoEWa6o53/RL+ZF3ykPqwU
+4deaDNCHbuL9XTxaRMC5gcH1txzy2O+JcEkBBCrDwVIms/t9dvV+lvAODmPN9ki8S3KT3z8k3i+YrkzTHBpNR1D4q0gxpZYcNRBPWMTmRvrLW7tZDSwqnJuQ
+ji6nroCKiHteV0VaUp6kJguyeoEdJhkcovcT1zRoJRp1CQaLiF+iI8Y49l6xNLY0Vs+A854is/geYwQJzYpdefd48YW39CqBkJFhOeyslZBPzQQ9jscwl4+w
+VaPq0Z/ur//RLdW872PgCah0wtWWP9SRvF6+RQxbjBZWx8PVsSzvJ4+WKxGuLsHHq03n3dUDmPQumSUQVur7LMt6aXMhuJuVhpP1RNkrd6MGsHD3XFnzcXUq
+4gsmqL5gCly0dob0VpcataSWXT8jisNTjXwTgccG83C5SqaEFA1gCluStETKBERluf7uTNDAXumYXqwwm/CJqOqK7VGoBY="
 
 language: java
 jdk:
@@ -19,8 +26,10 @@ before_install:
 after_success:
   #Publish reports to codecov.io
   - codecov
+  - .travis/publish.sh
 
 #script: ./gradlew check --debug
+script: ./gradlew check javadoc
 
 addons:
   coverity_scan:
