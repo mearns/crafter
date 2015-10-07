@@ -301,9 +301,6 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         @NotNull
         private final List<Supplier<? extends T>> elements;
 
-        @NotNull
-        private final ListBuilder<T> parent;
-
         {
             //Linked list is good because we're mostly just appending to it, and then iterating through it.
             // Linked lists are pretty good at both.
@@ -311,11 +308,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         }
 
         public DefaultListBuilder() {
-            this.parent = this;
-        }
 
-        public DefaultListBuilder(ListBuilder<T> parent) {
-            this.parent = parent;
         }
 
         /**
@@ -453,7 +446,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         @NotNull
         @Contract(pure=true)
         public ListBuilder<T> endMaybe() {
-            return parent;
+            return this;
         }
 
     }
