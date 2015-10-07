@@ -8,8 +8,10 @@ YOUR_REPO="mearns/crafter"
 #The user name and email that will show up one the commit to your gh-pages branch.
 #Alternatively, use $GIT_NAME and $GIT_EMAIL to extract the variables from the secure
 # block in the .travis.yml config file.
-YOUR_EMAIL="travis@travis-ci.org"
-YOUR_NAME="travis-ci build script"
+#YOUR_EMAIL="travis@travis-ci.org"
+#YOUR_NAME="travis-ci build script"
+YOUR_EMAIL=$GIT_EMAIL
+YOUR_NAME=$GIT_NAME
 
 
 #################################
