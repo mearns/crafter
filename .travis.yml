@@ -1,0 +1,33 @@
+env:
+  global:
+    # encrypted COVERITY_SCAN_TOKEN
+    - secure: "IedgEcKFcXesKjwR/gCGLW3FT1i8WfpKWmSQwXe/Shp8yRRM3b6NRjWZGJqzxfZ/aXzzkS6NMJm1kE1FHLfELjqaSEyxjGGgyBHUz7mS1wV4hSke1JNn67tbUx/JZKGfng/qMineSKLB+fdjIDzi/tkTNDxlXvHD1X80D/HNGSeaxO7/23z4JfoXYma2MXoIJyP+00NE0hLlncZy5Jwba3oohDp+BOwJd1IMBefk6wK3Vo+cyLKKpL06CLClxT1jqO/uDXSvtgODxEzyE1d48P5GFOQWOPPWM9wqbTGqE6mVFpwZcWZXg+kJiJQ0cvk0QXqSG8rYijiOa4rMuTgj56sR3n15QhQ5cYLu06ECnrgE7iP8thVlFP4JsojHXcn202Klb6bV5CYBhY0URoBHqBkQbs4b1T5ngsyJqAQio3UbaMd3ya2UqDKkUtf9DWNWq4FT38UNXZJO/94oz5zF7y4XguerFVbV/cAloxMeh86OdZKHnmfwxOoxOUi11hePH+579CQZtZHYH3s7x/fPFJJzl1tnwH8PSbxvQU9BZFw/g6/UrGulkMvBBGX/UfnlsUTsDUvYiWhUTCxrMe2xql6w18NBYAq9uFYxR1uRghv34/eI92Ua2bCsU8sqFBqdGhDOzyfRoUyD1283YJDYxeAx0hFeoUX9CEJrlWk+j/k="
+
+language: java
+jdk:
+  - oraclejdk7
+  #Not yet supported by findbugs.
+  #- oraclejdk8
+  - openjdk7
+
+before_install:
+  #Needed to avoid a problem in travis CI with permission for gradlew.
+  - chmod +x gradlew
+  #Install tool for publishing jacoco reports to codecov.io
+  - pip install --user codecov
+
+after_success:
+  #Publish reports to codecov.io
+  - codecov
+
+#script: ./gradlew check --debug
+
+addons:
+  coverity_scan:
+    project:
+      name: "mearns/crafter"
+      description: "A java library to support implementing the builder pattern."
+    notification_email: bmearns@ieee.org
+    build_command_prepend: "./gradlew clean"
+    build_command:   "./gradlew assemble"
+    branch_pattern: master
