@@ -91,23 +91,6 @@ public class ListBuilderTest {
     }
 
     @Test
-    public void testApply() {
-        ListBuilder<String> uut = ListBuilder.create(String.class)
-                    .add("foo").add("bar")
-                .apply(new Function<ListBuilder<String>, Void>() {
-                    @Nullable
-                    @Override
-                    public Void apply(ListBuilder<String> input) {
-                        input.add("goofy").add("ranbo");
-                        return null;
-                    }
-                }).add("end");
-        assertArrayEquals(new String[]{
-                "foo", "bar", "goofy", "ranbo", "end"
-        }, uut.get().toArray());
-    }
-
-    @Test
     public void test_always() {
         ListBuilder<String> uut = ListBuilder.create();
         ListBuilder<String> res = uut.always();
@@ -210,6 +193,44 @@ public class ListBuilderTest {
 
         assertSame("Expect value returned by add(T) is the original builder.", uut, res);
         assertArrayEquals("Expected addAll(Iterator<T>) to add the given items to the list.", expected, uut.get().toArray());
+    }
+
+    @Test
+    public void testApply() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(1).add(7);
+        ListBuilder<Integer> res = uut.apply(new Function<ListBuilder<Integer>, Void>() {
+            @Nullable
+            @Override
+            public Void apply(ListBuilder<Integer> input) {
+                input.add(32);
+                return null;
+            }
+        });
+
+        assertSame("The apply method should return the instance it was invoked on.", uut, res);
+        assertArrayEquals("Expected the applied function to change the state of the builder.",
+                new Integer[]{1, 7, 32}, uut.get().toArray());
+    }
+
+    @Test
+    public void testMaybeAdd_true() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(1).add(7);
+        ListBuilder<Integer> res = uut.maybeAdd(-5, true);
+
+        assertSame("The maybeAdd method should return the instance it was invoked on.", uut, res);
+        assertArrayEquals("Expected the maybeAdd method to change the state of the builder.",
+                new Integer[]{1, 7, -5}, uut.get().toArray());
+    }
+
+    @Test
+    public void testMaybeAdd_false() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(1).add(7);
+        ListBuilder<Integer> res = uut.maybeAdd(-5, false);
+        uut.add(12);
+
+        assertSame("The maybeAdd method should return the instance it was invoked on.", uut, res);
+        assertArrayEquals("Expected the maybeAdd method to not change the state of the builder.",
+                new Integer[]{1, 7, 12}, uut.get().toArray());
     }
 
 }
