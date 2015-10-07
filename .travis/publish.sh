@@ -22,7 +22,7 @@ if [ "$TRAVIS_REPO_SLUG" == "$YOUR_REPO" ] && [ "$TRAVIS_JDK_VERSION" == "oracle
 
   echo -e "...Copying files...\n"
   cp -R build/docs/javadoc $HOME/javadoc-latest
-  cp -R build/reports/test $HOME/test-report-latest
+  cp -R build/reports/tests $HOME/test-report-latest
   cp -R build/reports/findbugs $HOME/findbugs-report-latest
 
   echo -e "...Configuring git client as \"$YOUR_NAME\" <$YOUR_EMAIL>...\n"
