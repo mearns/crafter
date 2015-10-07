@@ -197,11 +197,12 @@ public class ListBuilderTest {
 
     @Test
     public void testApply() {
-        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(1).add(7);
+        final ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(1).add(7);
         ListBuilder<Integer> res = uut.apply(new Function<ListBuilder<Integer>, Void>() {
             @Nullable
             @Override
             public Void apply(ListBuilder<Integer> input) {
+                assertSame("Expected the apply() method to apply the function to the instance on which it is invoked.", uut, input);
                 input.add(32);
                 return null;
             }
