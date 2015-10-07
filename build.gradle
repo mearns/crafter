@@ -25,5 +25,12 @@ jacocoTestReport {
     }
 }
 
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
 check.dependsOn jacocoTestReport
 

@@ -18,10 +18,12 @@ YOUR_NAME=$GIT_NAME
 
 if [ "$TRAVIS_REPO_SLUG" == "$YOUR_REPO" ] && [ "$TRAVIS_JDK_VERSION" == "oraclejdk7" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
 
-  echo -e "Publishing javadoc...\n"
+  echo -e "Publishing files to gh-pages...\n"
 
-  echo -e "...Copying javadocs...\n"
+  echo -e "...Copying files...\n"
   cp -R build/docs/javadoc $HOME/javadoc-latest
+  cp -R build/reports/test $HOME/test-report-latest
+  cp -R build/reports/findbugs $HOME/findbugs-report-latest
 
   echo -e "...Configuring git client as \"$YOUR_NAME\" <$YOUR_EMAIL>...\n"
   cd $HOME
@@ -31,19 +33,23 @@ if [ "$TRAVIS_REPO_SLUG" == "$YOUR_REPO" ] && [ "$TRAVIS_JDK_VERSION" == "oracle
   echo -e "...Cloning gh-pages...\n"
   git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/$YOUR_REPO gh-pages > /dev/null
 
-  echo -e "...Deleting old javadocs...\n"
+  echo -e "...Deleting old files...\n"
   cd gh-pages
   git rm -rf ./javadoc
+  git rm -rf ./test-report
+  git rm -rf ./findbugs-report
 
-  echo -e "...Adding latest javadocs...\n"
+  echo -e "...Adding latest files...\n"
   cp -Rf $HOME/javadoc-latest ./javadoc
+  cp -Rf $HOME/test-report-latest ./test-report
+  cp -Rf $HOME/findbugs-report-latest ./findbugs-report
   git add -f .
-  git commit -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
+  git commit -m "Lastest files from successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
 
   echo -e "...Pushing to gh-pages...\n"
   git push -fq origin gh-pages > /dev/null
 
-  echo -e "Published Javadoc to gh-pages.\n"
+  echo -e "Published files to gh-pages.\n"
   
 fi
 
