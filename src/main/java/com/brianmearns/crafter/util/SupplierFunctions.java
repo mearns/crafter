@@ -60,6 +60,8 @@ public abstract class SupplierFunctions {
      */
     public static class BuilderToSupplierFunction<T> implements Function<Builder<T>, Supplier<T>> {
         @Override
+        @Nullable
+        @Contract(value="null -> null; !null -> !null", pure=true)
         public Supplier<T> apply(@Nullable Builder<T> input) {
             return input;
         }
