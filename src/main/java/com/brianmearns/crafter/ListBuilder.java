@@ -271,6 +271,20 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         return maybeAdd((Supplier<? extends T>) element, add);
     }
 
+    /**
+     * Apply the given function to {@code this} object, and return {@code this} object again.
+     *
+     * <p>
+     * This is simply a way to add some arbitrary code in the middle of a chain of method invocations.
+     * You could use the {@link Function} to perform some complex logic to configure the builder, for instance.
+     *
+     * <p>
+     * The return value of the function is ignored, but for safety and clarity, it should be a void return.
+     *
+     * @param function The {@link Function} to be invoked on {@code this} object.
+     *
+     * @return This {@code ListBuilder} itself, for chaining convenience.
+     */
     public abstract ListBuilder<T> apply(@NotNull Function<ListBuilder<T>, Void> function);
 
     /**
@@ -382,20 +396,6 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
             return this;
         }
 
-        /**
-         * Apply the given function to {@code this} object, and return {@code this} object again.
-         *
-         * <p>
-         * This is simply a way to add some arbitrary code in the middle of a chain of method invocations.
-         * You could use the {@link Function} to perform some complex logic to configure the builder, for instance.
-         *
-         * <p>
-         * The return value of the function is ignored, but for safety and clarity, it should be a void return.
-         *
-         * @param function The {@link Function} to be invoked on {@code this} object.
-         *
-         * @return This {@code ValueBuilder} itself, for chaining convenience.
-         */
         @Override
         @NotNull
         @Contract("_ -> !null")
