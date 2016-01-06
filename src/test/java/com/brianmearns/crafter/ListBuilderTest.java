@@ -1,7 +1,9 @@
 package com.brianmearns.crafter;
 
+import com.brianmearns.crafter.util.InvokeCountingFunction;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
@@ -9,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 /**
@@ -255,5 +258,27 @@ public class ListBuilderTest {
                 new Integer[]{15, -5, 32}, uut.get().toArray());
     }
 
+    @Test
+    public void testNeverListBuilder_apply() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(3).add(1);
+        InvokeCountingFunction<ListBuilder<Integer>, Void> func = new InvokeCountingFunction<ListBuilder<Integer>, Void>() {
+            @Nullable
+            @Override
+            @Contract("_ -> null")
+            public Void reallyApply(ListBuilder<Integer> input) {
+                input.add(5);
+                return null;
+            }
+        };
+        uut.maybe(false).apply(func);
+        ListBuilder<Integer> res = uut.always();
+        res.add(4);
+
+        assertSame("The never builder should have returned the original instance from the always method.", uut, res);
+        assertEquals("Expected the apply method on the never builder not to be called.", 0, func.getCount());
+        assertArrayEquals("Expected the apply method on the never builder to not change the state of the builder.",
+                new Integer[]{3, 1, 4}, uut.get().toArray());
+
+    }
 
 }

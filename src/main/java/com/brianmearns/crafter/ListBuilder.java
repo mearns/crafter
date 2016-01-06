@@ -504,13 +504,11 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         }
 
         /**
-         * Note that the never build <em>does</em> invoke the given function. The object passed in is the never builder
-         * itself, so any methods the function invokes on the builder have no impact.
+         * Note that the never build <em>does not</em> invoke the given function at all, it simply returns itself, as usual.
          */
         @NotNull
         @Override
         public ListBuilder<T> apply(@NotNull Function<ListBuilder<T>, Void> function) {
-            function.apply(this);
             return this;
         }
 
