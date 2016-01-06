@@ -107,9 +107,17 @@ public abstract class ValueBuilder<T> implements Builder<T> {
      * @return This {@code ValueBuilder} itself, for chaining convenience.
      */
     @NotNull
-    @Contract("_ -> !null")
     protected ValueBuilder<T> apply(Function<ValueBuilder<T>, Void> function) {
         function.apply(this);
+        return this;
+    }
+
+    @NotNull
+    protected abstract ValueBuilder<T> maybeSet(@NotNull Supplier<T> value, boolean doSet);
+
+    @NotNull
+    public ValueBuilder<T> maybeSet(@Nullable T value, boolean doSet) {
+        this.maybeSet(Suppliers.ofInstance(value), doSet);
         return this;
     }
 
@@ -175,6 +183,15 @@ public abstract class ValueBuilder<T> implements Builder<T> {
         @Override
         protected ValueBuilder<T> set(@NotNull Supplier<T> value) {
             this.value = value;
+            return this;
+        }
+
+        @NotNull
+        @Override
+        protected ValueBuilder<T> maybeSet(@NotNull Supplier<T> value, boolean doSet) {
+            if(doSet) {
+                set(value);
+            }
             return this;
         }
 

@@ -72,4 +72,40 @@ public class ValueBuilderTest {
         assertEquals("Expected the applied function to change the state of the builder.", Integer.valueOf(3), uut.get());
     }
 
+    @Test
+    public void testMaybeSet_true() {
+        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> res = uut.maybeSet(100, true);
+
+        assertSame("The maybeSet method should return the instance it was invoked on.", uut, res);
+        assertEquals("Expected the maybeSet method to change the value for the builder when true is given.", Integer.valueOf(100), uut.get());
+    }
+
+    @Test
+    public void testMaybeSet_Builder_true() {
+        ValueBuilder<Integer> uut = ValueBuilder.ofBuilder(ValueBuilder.ofInstance(12));
+        ValueBuilder<Integer> res = uut.maybeSet(121, true);
+
+        assertSame("The maybeSet method should return the instance it was invoked on.", uut, res);
+        assertEquals("Expected the maybeSet method to change the value for the builder when true is given.", Integer.valueOf(121), uut.get());
+    }
+
+    @Test
+    public void testMaybeSet_false() {
+        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> res = uut.maybeSet(100, false);
+
+        assertSame("The maybeSet method should return the instance it was invoked on.", uut, res);
+        assertEquals("Expected the maybeSet method to not change the value for the builder when false is given.", Integer.valueOf(5), uut.get());
+    }
+
+    @Test
+    public void testMaybeSet_Builder_false() {
+        ValueBuilder<Integer> uut = ValueBuilder.ofBuilder(ValueBuilder.ofInstance(12));
+        ValueBuilder<Integer> res = uut.maybeSet(121, false);
+
+        assertSame("The maybeSet method should return the instance it was invoked on.", uut, res);
+        assertEquals("Expected the maybeSet method to not change the value for the builder when false is given.", Integer.valueOf(12), uut.get());
+    }
+
 }

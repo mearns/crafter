@@ -93,7 +93,6 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      * @return {@code this} object itself, for chaining convenience.
      */
     @NotNull
-    @Contract("_, _ -> !null")
     protected abstract ListBuilder<T> maybeAdd(@NotNull Supplier<? extends T> element, boolean add);
 
     /**
@@ -108,7 +107,6 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      * @see #addBuilders(Iterable)
      */
     @NotNull
-    @Contract("_ -> !null")
     public ListBuilder<T> addAll(@NotNull Iterable<? extends T> elements) {
         return addSuppliers(Iterables.transform(elements, SupplierFunctions.<T>supplierOfInstanceFunction()));
     }
