@@ -107,10 +107,7 @@ public abstract class ValueBuilder<T> implements Builder<T> {
      * @return This {@code ValueBuilder} itself, for chaining convenience.
      */
     @NotNull
-    protected ValueBuilder<T> apply(Function<ValueBuilder<T>, Void> function) {
-        function.apply(this);
-        return this;
-    }
+    protected abstract ValueBuilder<T> apply(@NotNull Function<ValueBuilder<T>, Void> function);
 
     @NotNull
     protected abstract ValueBuilder<T> maybeSet(@NotNull Supplier<T> value, boolean doSet);
@@ -133,26 +130,27 @@ public abstract class ValueBuilder<T> implements Builder<T> {
     public abstract T get();
 
     /**
-     * A function that maps any value to a {@link ValueBuilder} {@linkplain #ofInstance(Object) of that instance}.
+     * Returns the top-level non-conditional builder.
      */
-    protected static class ValueBuilderOfInstanceFunction<T> implements Function<T, ValueBuilder<T>> {
-        @Nullable
-        @Override
-        public ValueBuilder<T> apply(@Nullable T input) {
-            return ofInstance(input);
-        }
-    }
+    @NotNull
+    @Contract("-> !null")
+    public abstract ValueBuilder<T> always();
 
     /**
-     * A function that maps any builder of a value to a {@link ValueBuilder} {@linkplain #ofBuilder(Builder) of that builder}.
+     * Returns a builder which either does or doesn't delegate to this builder based on the given boolean.
+     * @param yes If {@code true}, then methods invoked on the returned builder will modify the state of {@code this}
+     *            builder. Otherwise, methods invoked on the returned builder will not modify state.
      */
-    protected static class ValueBuilderOfBuilderFunction<T> implements Function<Builder<T>, ValueBuilder<T>> {
-        @Nullable
-        @Override
-        public ValueBuilder<T> apply(@Nullable Builder<T> input) {
-            return ofBuilder(input);
-        }
-    }
+    @NotNull
+    public abstract ValueBuilder<T> maybe(boolean yes);
+
+    /**
+     * Returns the parent builder of a conditional builder. This is not necessarily the originating top level
+     * builder if you have nested (or rather chained) calls to {@link #maybe(boolean)}.
+     */
+    @NotNull
+    public abstract ValueBuilder<T> endMaybe();
+
 
     protected static class DefaultValueBuilder<T> extends ValueBuilder<T> {
 
@@ -200,5 +198,125 @@ public abstract class ValueBuilder<T> implements Builder<T> {
         public T get() {
             return value.get();
         }
+
+        @Override
+        @NotNull
+        protected ValueBuilder<T> apply(@NotNull Function<ValueBuilder<T>, Void> function) {
+            function.apply(this);
+            return this;
+        }
+
+
+        /**
+         * Returns itself.
+         */
+        @Override
+        @NotNull
+        @Contract(pure=true)
+        public ValueBuilder<T> always() {
+            return this;
+        }
+
+        /**
+         * Returns either {@code this} object itself, or a new {@link NeverValueBuilder} if {@code yes} is {@code false}.
+         */
+        @Override
+        @NotNull
+        public ValueBuilder<T> maybe(boolean yes) {
+            if(yes) {
+                return this;
+            } else {
+                return new NeverValueBuilder<>(this, this);
+            }
+        }
+
+        @NotNull
+        @Override
+        @Contract(pure=true)
+        public ValueBuilder<T> endMaybe() {
+            return this;
+        }
     }
+
+    /**
+     * A {@link ValueBuilder} which doesn't actually do anything.
+     */
+    protected static class NeverValueBuilder<T> extends ValueBuilder<T> {
+
+        @NotNull
+        private final ValueBuilder<T> alwaysBuilder;
+
+        @NotNull
+        private final ValueBuilder<T> parent;
+
+        protected NeverValueBuilder(@NotNull ValueBuilder<T> alwaysBuilder, @NotNull ValueBuilder<T> parent) {
+            this.alwaysBuilder = alwaysBuilder;
+            this.parent = parent;
+        }
+
+        @NotNull
+        @Override
+        protected ValueBuilder<T> set(@NotNull Supplier<T> value) {
+            return this;
+        }
+
+        @NotNull
+        @Override
+        protected ValueBuilder<T> apply(@NotNull Function<ValueBuilder<T>, Void> function) {
+            return this;
+        }
+
+        @NotNull
+        @Override
+        protected ValueBuilder<T> maybeSet(@NotNull Supplier<T> value, boolean doSet) {
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public T get() {
+            return alwaysBuilder.get();
+        }
+
+        @NotNull
+        @Override
+        public ValueBuilder<T> always() {
+            return alwaysBuilder;
+        }
+
+        @NotNull
+        @Override
+        public ValueBuilder<T> maybe(boolean yes) {
+            return new NeverValueBuilder<>(alwaysBuilder, this);
+        }
+
+        @NotNull
+        @Override
+        public ValueBuilder<T> endMaybe() {
+            return parent;
+        }
+    }
+
+    /**
+     * A function that maps any value to a {@link ValueBuilder} {@linkplain #ofInstance(Object) of that instance}.
+     */
+    protected static class ValueBuilderOfInstanceFunction<T> implements Function<T, ValueBuilder<T>> {
+        @Nullable
+        @Override
+        public ValueBuilder<T> apply(@Nullable T input) {
+            return ofInstance(input);
+        }
+    }
+
+    /**
+     * A function that maps any builder of a value to a {@link ValueBuilder} {@linkplain #ofBuilder(Builder) of that builder}.
+     */
+    protected static class ValueBuilderOfBuilderFunction<T> implements Function<Builder<T>, ValueBuilder<T>> {
+        @Nullable
+        @Override
+        public ValueBuilder<T> apply(@Nullable Builder<T> input) {
+            return ofBuilder(input);
+        }
+    }
+
 }

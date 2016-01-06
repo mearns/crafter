@@ -1,5 +1,6 @@
 package com.brianmearns.crafter;
 
+import com.brianmearns.crafter.util.InvokeCountingFunction;
 import com.google.common.base.Function;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
@@ -106,6 +107,115 @@ public class ValueBuilderTest {
 
         assertSame("The maybeSet method should return the instance it was invoked on.", uut, res);
         assertEquals("Expected the maybeSet method to not change the value for the builder when false is given.", Integer.valueOf(12), uut.get());
+    }
+
+    @Test
+    public void test_always() {
+        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> res = uut.always();
+
+        assertSame("The always method should return the instance it was invoked on.", uut, res);
+    }
+
+    @Test
+    public void test_endMaybe() {
+        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> res = uut.endMaybe();
+
+        assertSame("The always method should return the instance it was invoked on.", uut, res);
+    }
+
+    @Test
+    public void testMaybe_true() {
+        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> res = uut.maybe(true);
+
+        assertSame("The maybe method should return the instance it was invoked on.", uut, res);
+    }
+
+    @Test
+    public void testMaybe_false_set() {
+        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = orig.maybe(false);
+        ValueBuilder<Integer> res = uut.set(81);
+
+        assertSame("Expected never builder to return itself from set method.", uut, res);
+        assertEquals("Expected the set method to not change the state of the builder after a maybe(false).", Integer.valueOf(5), uut.get());
+    }
+
+    @Test
+    public void testMaybe_false_maybeSet_true() {
+        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = orig.maybe(false);
+        ValueBuilder<Integer> res = uut.maybeSet(81, true);
+
+        assertSame("Expected never builder to return itself from maybeSet method.", uut, res);
+        assertEquals("Expected the maybeSet method to not change the state of the builder after a maybe(false).", Integer.valueOf(5), uut.get());
+    }
+
+    @Test
+    public void testMaybe_false_maybeSet_false() {
+        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = orig.maybe(false);
+        ValueBuilder<Integer> res = uut.maybeSet(81, false);
+
+        assertSame("Expected never builder to return itself from maybeSet method.", uut, res);
+        assertEquals("Expected the maybeSet method to not change the state of the builder after a maybe(false).", Integer.valueOf(5), uut.get());
+    }
+
+    @Test
+    public void testMaybe_false_get() {
+        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = orig.maybe(false);
+        orig.set(15);
+
+        assertEquals("Expected never builder to delegate to always builder on get().", Integer.valueOf(15), uut.get());
+    }
+
+    @Test
+    public void testMaybe_false_always() {
+        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = orig.maybe(false);
+        ValueBuilder<Integer> res = uut.always();
+
+        assertSame("Expected never builder to return the always builder from always().", orig, res);
+    }
+
+    @Test
+    public void testMaybe_false_maybe_true() {
+        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = orig.maybe(false).maybe(true);
+        uut.set(51);
+
+
+        assertEquals("Expected never builder to return another never builder from maybe(true).", Integer.valueOf(5), uut.get());
+    }
+
+    @Test
+    public void testMaybe_false_endMaybe() {
+        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> res = uut.maybe(false).endMaybe();
+
+        assertSame("Expected never builder to return parent from endMaybe()", uut, res);
+    }
+
+    @Test
+    public void testMaybe_false_apply() {
+        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = orig.maybe(false);
+        InvokeCountingFunction<ValueBuilder<Integer>, Void> func = InvokeCountingFunction.reallyDoNothing();
+        ValueBuilder<Integer> res = uut.apply(func);
+
+        assertEquals("Expected function to not be called by never builder's apply method.", 0, func.getCount());
+        assertSame("Expected never builder's apply method to return the instance it was invoked on.", uut, res);
+    }
+
+    @Test
+    public void test_nested_neverBuilders() {
+        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> res = uut.maybe(false).maybe(false).maybe(false).endMaybe().endMaybe().endMaybe();
+
+        assertSame("Expected never builder correctly nest and un-nest with endMaybe", uut, res);
     }
 
 }

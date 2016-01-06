@@ -309,7 +309,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
     public abstract ListBuilder<T> maybe(boolean yes);
 
     /**
-     * Returns the alwaysBuilder list builder of a conditional list builder. This is not necessarily the originating top level
+     * Returns the parent list builder of a conditional list builder. This is not necessarily the originating top level
      * builder if you have nested (or rather chained) calls to {@link #maybe(boolean)}.
      */
     @NotNull
@@ -420,7 +420,6 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
          * @return The built list of elements.
          */
         @NotNull
-        @Contract("-> !null")
         @Override
         public List<T> get() {
             return get(ImmutableList.copyOf(elements));
@@ -431,7 +430,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
          */
         @Override
         @NotNull
-        @Contract(value="-> !null", pure=true)
+        @Contract(pure=true)
         public ListBuilder<T> always() {
             return this;
         }
@@ -450,6 +449,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         }
 
         @NotNull
+        @Override
         @Contract(pure=true)
         public ListBuilder<T> endMaybe() {
             return this;
