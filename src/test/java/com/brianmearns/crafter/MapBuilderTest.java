@@ -172,7 +172,6 @@ public class MapBuilderTest {
                 .put(4, "four").put(5, "not six").build(), orig.get());
     }
 
-
     @Test
     public void testMaybe_false_apply() {
         MapBuilder<Integer, String> orig = MapBuilder.create(Integer.class, String.class).put(4, "four").put(5, "not six");
@@ -183,5 +182,16 @@ public class MapBuilderTest {
         assertSame("Expected apply() to return the object on which it was invoked on a never builder.", uut, res);
         assertEquals("Expected never builder's apply() method to not invoke provided function.", 0, func.getCount());
     }
+
+    @Test
+    public void testMaybe_false_get() {
+        MapBuilder<Integer, String> orig = MapBuilder.create(Integer.class, String.class).put(4, "four").put(5, "not six");
+        MapBuilder<Integer, String> uut = orig.maybe(false);
+
+        assertEquals("Expected get() on never builder to return the same map that orig returns", ImmutableMap.<Integer, String>builder()
+                .put(4, "four").put(5, "not six").build(), uut.get());
+    }
+
+    //XXX: Left off here, have a few more "maybe_false" tests to do: maybe(true), maybe(false), endMaybe(), and always().
 
 }
