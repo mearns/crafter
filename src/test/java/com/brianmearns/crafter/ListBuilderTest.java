@@ -10,9 +10,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 
 /**
  * @author Brian Mearns <bmearns@ieee.org>
@@ -279,6 +277,15 @@ public class ListBuilderTest {
         assertArrayEquals("Expected the apply method on the never builder to not change the state of the builder.",
                 new Integer[]{3, 1, 4}, uut.get().toArray());
 
+    }
+
+    @Test
+    public void testNeverListBuilder_get() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(7).add(0).maybe(false);
+        uut.add(7).add(14);
+
+        assertArrayEquals("Expected NeverListBuilder to return the always builder's list from get().",
+                new Integer[]{7, 0}, uut.get().toArray());
     }
 
 }
