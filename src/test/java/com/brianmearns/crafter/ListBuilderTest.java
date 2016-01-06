@@ -224,6 +224,16 @@ public class ListBuilderTest {
     }
 
     @Test
+    public void testMaybeAdd_Builder_true() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(1).add(7);
+        ListBuilder<Integer> res = uut.maybeAdd(ValueBuilder.ofInstance(5), true);
+
+        assertSame("The maybeAdd method should return the instance it was invoked on.", uut, res);
+        assertArrayEquals("Expected the maybeAdd method to change the state of the builder.",
+                new Integer[]{1, 7, 5}, uut.get().toArray());
+    }
+
+    @Test
     public void testMaybeAdd_false() {
         ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(1).add(7);
         ListBuilder<Integer> res = uut.maybeAdd(-5, false);
@@ -233,5 +243,17 @@ public class ListBuilderTest {
         assertArrayEquals("Expected the maybeAdd method to not change the state of the builder.",
                 new Integer[]{1, 7, 12}, uut.get().toArray());
     }
+
+    @Test
+    public void testMaybeAdd_Builder_false() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(15).add(-5);
+        ListBuilder<Integer> res = uut.maybeAdd(ValueBuilder.ofInstance(8), false);
+        uut.add(32);
+
+        assertSame("The maybeAdd method should return the instance it was invoked on.", uut, res);
+        assertArrayEquals("Expected the maybeAdd method to not change the state of the builder.",
+                new Integer[]{15, -5, 32}, uut.get().toArray());
+    }
+
 
 }
