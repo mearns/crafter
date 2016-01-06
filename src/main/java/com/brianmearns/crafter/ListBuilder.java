@@ -22,12 +22,19 @@ import java.util.*;
 @SuppressWarnings("unused")
 public abstract class ListBuilder<T> implements Builder<List<T>> {
 
+    /**
+     * Static factory method to create an instance.
+     */
     @NotNull
     @Contract("-> !null")
     public static <T> ListBuilder<T> create() {
         return new DefaultListBuilder<>();
     }
 
+    /**
+     * Static factory method to create an instance.
+     * @param cls Specifies the type {@code T} of the builder returned.
+     */
     @NotNull
     @Contract("_ -> !null")
     public static <T> ListBuilder<T> create(Class<T> cls) {
