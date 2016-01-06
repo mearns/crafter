@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Brian Mearns <bmearns@ieee.org>
  */
 @SuppressWarnings("unused")
-public class ValueBuilder<T> implements Builder<T> {
+public abstract class ValueBuilder<T> implements Builder<T> {
 
     /**
      * Instantiate a new {@link ValueBuilder} initialized with the given <code>value</code>. I.e., when
@@ -22,25 +22,21 @@ public class ValueBuilder<T> implements Builder<T> {
      *
      * @param value The value to which the returned builder is initialized.
      * @param <T> The type which is built by the returned builder.
-     *
-     * @see #ValueBuilder(Object)
      */
     @NotNull
     @Contract("_ -> !null")
     public static <T> ValueBuilder<T> ofInstance(T value) {
-        return new ValueBuilder<>(value);
+        return new DefaultValueBuilder<>(value);
     }
 
     /**
      * Instantiate a new {@link ValueBuilder} initialized with the given <code>value</code>. I.e., when
      * the {@link #get()} method is invoked, it will delegate to the given object.
-     *
-     * @see #ValueBuilder(Builder)
      */
     @NotNull
     @Contract("_ -> !null")
     public static <T> ValueBuilder<T> ofBuilder(Builder<T> value) {
-        return new ValueBuilder<>(value);
+        return new DefaultValueBuilder<>(value);
     }
 
     /**
@@ -64,29 +60,6 @@ public class ValueBuilder<T> implements Builder<T> {
     }
 
     /**
-     * A supplier for the value. Suppliers are used to encapsulate the fact that you can
-     * set the value using either a value directly, or a builder for the value.
-     */
-    @NotNull
-    private Supplier<T> value = Suppliers.ofInstance(null);
-
-    /**
-     * Create a new instance and {@linkplain #set(Object) set} the value to the given {@code value}.
-     */
-    public ValueBuilder(@Nullable T value) {
-        set(value);
-    }
-
-    /**
-     * Create a new instance and {@linkplain #set(Builder) set} the value using the given {@code builder}.
-     * The builder is not invoked to build the value immediately, it will be invoked when <em>this</em> builder's
-     * {@link #get()} method is invoked.
-     */
-    public ValueBuilder(Builder<T> builder) {
-        set(builder);
-    }
-
-    /**
      * Sets the builder to use the given instance. The {@link #get()} method will return this instance as is.
      *
      * @return This {@code ValueBuilder} itself, for chaining convenience.
@@ -104,7 +77,6 @@ public class ValueBuilder<T> implements Builder<T> {
      * @return This {@code ValueBuilder} itself, for chaining convenience.
      */
     @NotNull
-    @Contract("_ -> !null")
     public ValueBuilder<T> set(@NotNull Builder<T> valueBuilder) {
         return set((Supplier<T>)valueBuilder);
     }
@@ -118,11 +90,7 @@ public class ValueBuilder<T> implements Builder<T> {
      * @return This {@code ValueBuilder} itself, for chaining convenience.
      */
     @NotNull
-    @Contract("_ -> !null")
-    protected ValueBuilder<T> set(@NotNull Supplier<T> value) {
-        this.value = value;
-        return this;
-    }
+    protected abstract ValueBuilder<T> set(@NotNull Supplier<T> value);
 
     /**
      * Apply the given function to {@code this} object, and return {@code this} object again.
@@ -154,9 +122,7 @@ public class ValueBuilder<T> implements Builder<T> {
      */
     @Nullable
     @Override
-    public T get() {
-        return value.get();
-    }
+    public abstract T get();
 
     /**
      * A function that maps any value to a {@link ValueBuilder} {@linkplain #ofInstance(Object) of that instance}.
@@ -177,6 +143,45 @@ public class ValueBuilder<T> implements Builder<T> {
         @Override
         public ValueBuilder<T> apply(@Nullable Builder<T> input) {
             return ofBuilder(input);
+        }
+    }
+
+    protected static class DefaultValueBuilder<T> extends ValueBuilder<T> {
+
+        /**
+         * A supplier for the value. Suppliers are used to encapsulate the fact that you can
+         * set the value using either a value directly, or a builder for the value.
+         */
+        @NotNull
+        private Supplier<T> value = Suppliers.ofInstance(null);
+
+        /**
+         * Create a new instance and {@linkplain #set(Object) set} the value to the given {@code value}.
+         */
+        protected DefaultValueBuilder(@Nullable T value) {
+            set(value);
+        }
+
+        /**
+         * Create a new instance and {@linkplain #set(Builder) set} the value using the given {@code builder}.
+         * The builder is not invoked to build the value immediately, it will be invoked when <em>this</em> builder's
+         * {@link #get()} method is invoked.
+         */
+        protected DefaultValueBuilder(Builder<T> builder) {
+            set(builder);
+        }
+
+        @NotNull
+        @Override
+        protected ValueBuilder<T> set(@NotNull Supplier<T> value) {
+            this.value = value;
+            return this;
+        }
+
+        @Nullable
+        @Override
+        public T get() {
+            return value.get();
         }
     }
 }

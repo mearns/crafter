@@ -120,9 +120,9 @@ public class ListBuilderTest {
     public void testAdd_Builder_T() throws Exception {
         ListBuilder<String> uut = ListBuilder.create();
         ListBuilder<String> res = uut
-                .add(new ValueBuilder<>("foo"))
-                .add(new ValueBuilder<>("bar"))
-                .add(new ValueBuilder<>("baz"));
+                .add(ValueBuilder.ofInstance("foo"))
+                .add(ValueBuilder.ofInstance("bar"))
+                .add(ValueBuilder.ofInstance("baz"));
 
         assertSame("Expect value returned by add(T) is the original builder.", uut, res);
         assertArrayEquals("Expected add to add the given elements to the list, in order.", new String[]{"foo", "bar", "baz"}, uut.get().toArray());
@@ -143,9 +143,9 @@ public class ListBuilderTest {
         final String[] expected = new String[]{"burley", "hurley", "Fran"};
         @SuppressWarnings("unchecked")
         final Builder<String>[] builders = new Builder[] {
-                new ValueBuilder<>(expected[0]),
-                new ValueBuilder<>(expected[1]),
-                new ValueBuilder<>(expected[2])
+                ValueBuilder.ofInstance(expected[0]),
+                ValueBuilder.ofInstance(expected[1]),
+                ValueBuilder.ofInstance(expected[2])
         };
         ListBuilder<String> uut = ListBuilder.create();
         ListBuilder<String> res = uut.addBuilders(builders);

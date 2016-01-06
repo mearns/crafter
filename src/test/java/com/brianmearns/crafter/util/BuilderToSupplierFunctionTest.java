@@ -20,7 +20,7 @@ public class BuilderToSupplierFunctionTest {
     public void testApply() throws Exception {
         Function<Builder<String>, Supplier<String>> uut = new SupplierFunctions.BuilderToSupplierFunction<>();
 
-        Builder<String> builder = new ValueBuilder<>("test value");
+        Builder<String> builder = ValueBuilder.ofInstance("test value");
         Supplier<String> supplier = uut.apply(builder);
         assertNotNull("Function should not return null", supplier);
         assertSame("Expected function to return the same instance as given.", builder, supplier);

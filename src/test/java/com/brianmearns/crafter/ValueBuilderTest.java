@@ -13,16 +13,16 @@ public class ValueBuilderTest {
 
     @Test
     public void testConstructor_Builder() {
-        ValueBuilder<String> builder = new ValueBuilder<>("Foobartle");
-        ValueBuilder<String> uut = new ValueBuilder<>(builder);
+        ValueBuilder<String> builder = ValueBuilder.ofInstance("Foobartle");
+        ValueBuilder<String> uut = ValueBuilder.ofBuilder(builder);
 
         assertEquals("Expected built value to be the value that the builder passed into contructor builds.", "Foobartle", uut.get());
     }
 
     @Test
     public void testConstructor_Builder_changeBuilderAfter() {
-        ValueBuilder<String> builder = new ValueBuilder<>("Foobartle");
-        ValueBuilder<String> uut = new ValueBuilder<>(builder);
+        ValueBuilder<String> builder = ValueBuilder.ofInstance("Foobartle");
+        ValueBuilder<String> uut = ValueBuilder.ofBuilder(builder);
 
         builder.set("This is my real value.");
 
@@ -58,7 +58,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testApply() {
-        ValueBuilder<Integer> uut = new ValueBuilder<>(1);
+        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(1);
         ValueBuilder<Integer> res = uut.apply(new Function<ValueBuilder<Integer>, Void>() {
             @Nullable
             @Override
