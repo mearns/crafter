@@ -2,9 +2,9 @@ package com.brianmearns.crafter;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;

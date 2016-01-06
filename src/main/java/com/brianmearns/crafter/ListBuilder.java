@@ -9,9 +9,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
@@ -285,6 +285,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      *
      * @return This {@code ListBuilder} itself, for chaining convenience.
      */
+    @NotNull
     public abstract ListBuilder<T> apply(@NotNull Function<ListBuilder<T>, Void> function);
 
     /**
@@ -468,30 +469,35 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
         }
 
         @Override
+        @NotNull
         @Contract(pure=true)
         protected ListBuilder<T> add(@NotNull Supplier<? extends T> element) {
             return this;
         }
 
         @Override
+        @NotNull
         @Contract(pure=true)
         protected ListBuilder<T> addSuppliers(@NotNull Iterable<? extends Supplier<? extends T>> elements) {
             return this;
         }
 
         @Override
+        @NotNull
         @Contract(pure=true)
         protected ListBuilder<T> addSuppliers(@NotNull Iterator<? extends Supplier<? extends T>> elements) {
             return this;
         }
 
         @Override
+        @NotNull
         @Contract(pure=true)
         protected ListBuilder<T> addSuppliers(@NotNull Supplier<? extends T>[] elements) {
             return this;
         }
 
         @Override
+        @NotNull
         @Contract(pure=true)
         protected ListBuilder<T> maybeAdd(@NotNull Supplier<? extends T> element, boolean add) {
             return this;
@@ -501,6 +507,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
          * Note that the never build <em>does</em> invoke the given function. The object passed in is the never builder
          * itself, so any methods the function invokes on the builder have no impact.
          */
+        @NotNull
         @Override
         public ListBuilder<T> apply(@NotNull Function<ListBuilder<T>, Void> function) {
             function.apply(this);
@@ -511,6 +518,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
          * Returns the originating (non-conditional) list builder.
          */
         @Override
+        @NotNull
         @Contract(pure=true)
         public ListBuilder<T> always() {
             return alwaysBuilder;
@@ -522,6 +530,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
          * one is, the aggregate is false.
          */
         @Override
+        @NotNull
         @Contract(pure=true)
         public ListBuilder<T> maybe(boolean yes) {
             return new NeverListBuilder<>(alwaysBuilder, this);
@@ -537,6 +546,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
          * Delegates to the originating (non-conditional) list builder.
          */
         @Override
+        @NotNull
         public List<T> get() {
             return alwaysBuilder.get();
         }

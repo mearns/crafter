@@ -1,6 +1,7 @@
 package com.brianmearns.crafter;
 
 import com.google.common.base.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@code Builder} implements the builder design pattern, in which one object is used to
@@ -30,5 +31,6 @@ public interface Builder<T> extends Supplier<T> {
      * @return A newly created instance of type {@code T}.
      */
     @Override
+    @Nullable
     T get();
 }

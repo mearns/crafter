@@ -4,9 +4,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 
 /**
  * A simple {@link Builder} for a single value. This is generally used as a utility inside another builder.
@@ -16,24 +16,47 @@ import javax.validation.constraints.NotNull;
 @SuppressWarnings("unused")
 public class ValueBuilder<T> implements Builder<T> {
 
+    /**
+     * Instantiate a new {@link ValueBuilder} initialized with the given <code>value</code>. I.e., when
+     * the {@link #get()} method is invoked, it will return <code>value</code> as the built object.
+     *
+     * @param value The value to which the returned builder is initialized.
+     * @param <T> The type which is built by the returned builder.
+     *
+     * @see #ValueBuilder(Object)
+     */
     @NotNull
     @Contract("_ -> !null")
     public static <T> ValueBuilder<T> ofInstance(T value) {
         return new ValueBuilder<>(value);
     }
 
+    /**
+     * Instantiate a new {@link ValueBuilder} initialized with the given <code>value</code>. I.e., when
+     * the {@link #get()} method is invoked, it will delegate to the given object.
+     *
+     * @see #ValueBuilder(Builder)
+     */
     @NotNull
     @Contract("_ -> !null")
     public static <T> ValueBuilder<T> ofBuilder(Builder<T> value) {
         return new ValueBuilder<>(value);
     }
 
+    /**
+     * Returns a function which maps Builders of objects to ValueBuilders, using the {@link #ofBuilder(Builder)}
+     * method.
+     */
     @NotNull
     @Contract(" -> !null")
     public static <T> Function<Builder<T>, ValueBuilder<T>> ofBuilderFunction() {
         return new ValueBuilderOfBuilderFunction<>();
     }
 
+    /**
+     * Returns a function which maps values to ValueBuilders of that value, using the {@link #ofInstance(Object)}
+     * method.
+     */
     @NotNull
     @Contract(" -> !null")
     public static <T> Function<T, ValueBuilder<T>> ofInstanceFunction() {
@@ -45,7 +68,7 @@ public class ValueBuilder<T> implements Builder<T> {
      * set the value using either a value directly, or a builder for the value.
      */
     @NotNull
-    private Supplier<T> value;
+    private Supplier<T> value = Suppliers.ofInstance(null);
 
     /**
      * Create a new instance and {@linkplain #set(Object) set} the value to the given {@code value}.

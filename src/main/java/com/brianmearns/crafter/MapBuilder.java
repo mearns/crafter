@@ -4,9 +4,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,7 +69,6 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
      * @param key The key to add (or replace) in the map.
      * @param valueSupplier A {@link Supplier} for the value to put in the map.
      */
-    @NotNull
     protected abstract void putSupplier(@Nullable K key, @NotNull Supplier<? extends V> valueSupplier);
 
     /**
@@ -151,6 +150,10 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
      * @return This {@code MapBuilder} itself, for chaining convenience.
      */
     public abstract MapBuilder<K,V> apply(Function<MapBuilder<K,V>, Void> function);
+
+    @Override
+    @NotNull
+    public abstract Map<K, V> get();
 
 
     protected static class DefaultMapBuilder<K, V> extends MapBuilder<K, V> {

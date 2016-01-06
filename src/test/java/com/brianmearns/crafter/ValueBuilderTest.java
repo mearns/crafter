@@ -1,13 +1,10 @@
 package com.brianmearns.crafter;
 
 import com.google.common.base.Function;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
-import javax.annotation.Nullable;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 
 /**
  *

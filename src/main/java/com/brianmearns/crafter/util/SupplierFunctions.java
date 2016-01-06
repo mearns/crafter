@@ -5,9 +5,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import org.jetbrains.annotations.Contract;
-
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Brian Mearns <bmearns@ieee.org>
