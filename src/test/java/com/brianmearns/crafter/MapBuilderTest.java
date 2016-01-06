@@ -1,7 +1,9 @@
 package com.brianmearns.crafter;
 
+import com.brianmearns.crafter.util.InvokeCountingFunction;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
@@ -18,6 +20,16 @@ import static org.junit.Assert.assertSame;
  */
 public class MapBuilderTest {
 
+    @Test
+    public void test_create() {
+        MapBuilder<Integer, Integer> uut = MapBuilder.create();
+        MapBuilder<Integer, Integer> res = uut.put(1, 42);
+        Map<Integer, Integer> map = res.get();
+
+        assertSame("Expected return value of put(K,V) to be the same as the original object.", uut, res);
+        assertEquals(new HashSet<>(Collections.singleton(1)), map.keySet());
+        assertEquals(new HashSet<>(Collections.singleton(42)), new HashSet<>(map.values()));
+    }
 
     @Test
     public void test_put() {
@@ -126,6 +138,50 @@ public class MapBuilderTest {
         assertEquals("Expected specified value to be mapped to 1:", "one", map.get(1));
         assertEquals("Expected specified value to be mapped to 2:", "Deux", map.get(2));
         assertEquals("Expected specified value to be mapped to 32:", "three tens and two", map.get(32));
+    }
+
+    @Test
+    public void testMaybe_true() {
+        MapBuilder<Integer, String> uut = MapBuilder.create();
+        MapBuilder<Integer, String> res = uut.maybe(true);
+        assertSame("Expected maybe(true) to return the instance on which it was invoked.", uut, res);
+    }
+
+    @Test
+    public void testEndMaybe() {
+        MapBuilder<Integer, String> uut = MapBuilder.create();
+        MapBuilder<Integer, String> res = uut.endMaybe();
+        assertSame("Expected endMaybe() to return the instance on which it was invoked.", uut, res);
+    }
+
+    @Test
+    public void testAlways() {
+        MapBuilder<Integer, String> uut = MapBuilder.create();
+        MapBuilder<Integer, String> res = uut.always();
+        assertSame("Expected always() to return the instance on which it was invoked.", uut, res);
+    }
+
+    @Test
+    public void testMaybe_false_put() {
+        MapBuilder<Integer, String> orig = MapBuilder.create(Integer.class, String.class).put(4, "four").put(5, "not six");
+        MapBuilder<Integer, String> uut = orig.maybe(false);
+        MapBuilder<Integer, String> res = uut.put(7, "sept");
+
+        assertSame("Expected put() to return the object on which it was invoked on a never builder.", uut, res);
+        assertEquals("Expected map to be unaltered by the never builder's put() method.", ImmutableMap.<Integer, String>builder()
+                .put(4, "four").put(5, "not six").build(), orig.get());
+    }
+
+
+    @Test
+    public void testMaybe_false_apply() {
+        MapBuilder<Integer, String> orig = MapBuilder.create(Integer.class, String.class).put(4, "four").put(5, "not six");
+        MapBuilder<Integer, String> uut = orig.maybe(false);
+        InvokeCountingFunction<MapBuilder<Integer, String>, Void> func = InvokeCountingFunction.reallyDoNothing();
+        MapBuilder<Integer, String> res = uut.apply(func);
+
+        assertSame("Expected apply() to return the object on which it was invoked on a never builder.", uut, res);
+        assertEquals("Expected never builder's apply() method to not invoke provided function.", 0, func.getCount());
     }
 
 }

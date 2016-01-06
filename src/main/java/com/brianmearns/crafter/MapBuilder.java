@@ -7,10 +7,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A {@link Builder} of {@linkplain Map map} objects.
@@ -156,9 +153,18 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
     public abstract Map<K, V> get();
 
 
+    @NotNull
+    public abstract MapBuilder<K, V> maybe(boolean yes);
+
+    @NotNull
+    public abstract MapBuilder<K, V> endMaybe();
+
+    @NotNull
+    public abstract MapBuilder<K, V> always();
+
     protected static class DefaultMapBuilder<K, V> extends MapBuilder<K, V> {
         @NotNull
-        List<Entry<K,V>> entries;
+        private List<Entry<K,V>> entries;
 
         public DefaultMapBuilder() {
             entries = new LinkedList<>();
@@ -168,11 +174,55 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
         @NotNull
         @Contract("-> !null")
         public Map<K, V> get() {
-            Map<K,V> map = new LinkedHashMap<>();
+            return buildMap(entries);
+        }
+
+        @NotNull
+        @Override
+        public MapBuilder<K, V> maybe(boolean yes) {
+            if(yes) {
+                return this;
+            }
+            return new NeverMapBuilder<>(this, this);
+        }
+
+        @Override
+        @NotNull
+        public MapBuilder<K, V> endMaybe() {
+            return this;
+        }
+
+        @Override
+        @NotNull
+        public MapBuilder<K, V> always() {
+            return this;
+        }
+
+        /**
+         * Helper function called from {@link #get()} to actually build and populate
+         * the map with the given entries. This makes it easier to override if you want to
+         * create a different type of map.
+         *
+         * This will typically delegate to {@link #createMap(int)}.
+         */
+        @NotNull
+        protected Map<K, V> buildMap(@NotNull List<Entry<K,V>> entries) {
+            Map<K,V> map = createMap(entries.size());
             for(Entry<K,V> entry : entries) {
                 map.put(entry.getKey(), entry.getValue());
             }
             return map;
+        }
+
+        /**
+         * Helper methods called by {@link #buildMap(List)} to create the initial map. This is the easiest
+         * way to override the implementation of the Map interface you want to use.
+         *
+         * @param size The approximate number of entries that the map will need to hold initially.
+         */
+        @NotNull
+        protected Map<K, V> createMap(int size) {
+            return new HashMap<>(size);
         }
 
         @Override
@@ -199,15 +249,62 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
             }
 
             @Nullable
-            @Contract(pure=true)
             public K getKey() {
                 return key;
             }
 
-            @Contract(value="->!null")
+            @Nullable
             public V getValue() {
                 return value.get();
             }
+        }
+    }
+
+    protected static class NeverMapBuilder<K, V> extends MapBuilder<K, V> {
+
+        @NotNull
+        private final MapBuilder<K, V> alwaysBuilder;
+
+        @NotNull
+        private final MapBuilder<K, V> parent;
+
+        protected NeverMapBuilder(@NotNull MapBuilder<K, V> alwaysBuilder, @NotNull MapBuilder<K, V> parent) {
+            this.alwaysBuilder = alwaysBuilder;
+            this.parent = parent;
+        }
+
+        @Override
+        protected void putSupplier(@Nullable K key, @NotNull Supplier<? extends V> valueSupplier) {
+            //Do nothing;
+        }
+
+        @Override
+        public MapBuilder<K, V> apply(Function<MapBuilder<K, V>, Void> function) {
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public Map<K, V> get() {
+            return alwaysBuilder.get();
+        }
+
+        @NotNull
+        @Override
+        public MapBuilder<K, V> maybe(boolean yes) {
+            return new NeverMapBuilder<>(alwaysBuilder, this);
+        }
+
+        @NotNull
+        @Override
+        public MapBuilder<K, V> endMaybe() {
+            return parent;
+        }
+
+        @NotNull
+        @Override
+        public MapBuilder<K, V> always() {
+            return alwaysBuilder;
         }
     }
 }
