@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ValueBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">crafter</a> &gt; <a href="index.source.html" class="el_package">com.brianmearns.crafter</a> &gt; <span class="el_source">ValueBuilder.java</span></div><h1>ValueBuilder.java</h1><pre class="source lang-java linenums">package com.brianmearns.crafter;
+
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+
+/**
+ * A simple {@link Builder} for a single value. This is generally used as a utility inside another builder.
+ *
+ * @author Brian Mearns &lt;bmearns@ieee.org&gt;
+ */
+@SuppressWarnings(&quot;unused&quot;)
+<span class="fc" id="L17">public abstract class ValueBuilder&lt;T&gt; implements Builder&lt;T&gt; {</span>
+
+    /**
+     * Instantiate a new {@link ValueBuilder} initialized with the given &lt;code&gt;value&lt;/code&gt;. I.e., when
+     * the {@link #get()} method is invoked, it will return &lt;code&gt;value&lt;/code&gt; as the built object.
+     *
+     * @param value The value to which the returned builder is initialized.
+     * @param &lt;T&gt; The type which is built by the returned builder.
+     */
+    @NotNull
+    @Contract(&quot;_ -&gt; !null&quot;)
+    public static &lt;T&gt; ValueBuilder&lt;T&gt; ofInstance(T value) {
+<span class="fc" id="L29">        return new DefaultValueBuilder&lt;&gt;(value);</span>
+    }
+
+    /**
+     * Instantiate a new {@link ValueBuilder} initialized with the given &lt;code&gt;value&lt;/code&gt;. I.e., when
+     * the {@link #get()} method is invoked, it will delegate to the given object.
+     */
+    @NotNull
+    @Contract(&quot;_ -&gt; !null&quot;)
+    public static &lt;T&gt; ValueBuilder&lt;T&gt; ofBuilder(Builder&lt;T&gt; value) {
+<span class="fc" id="L39">        return new DefaultValueBuilder&lt;&gt;(value);</span>
+    }
+
+    /**
+     * Returns a function which maps Builders of objects to ValueBuilders, using the {@link #ofBuilder(Builder)}
+     * method.
+     */
+    @NotNull
+    @Contract(&quot; -&gt; !null&quot;)
+    public static &lt;T&gt; Function&lt;Builder&lt;T&gt;, ValueBuilder&lt;T&gt;&gt; ofBuilderFunction() {
+<span class="fc" id="L49">        return new ValueBuilderOfBuilderFunction&lt;&gt;();</span>
+    }
+
+    /**
+     * Returns a function which maps values to ValueBuilders of that value, using the {@link #ofInstance(Object)}
+     * method.
+     */
+    @NotNull
+    @Contract(&quot; -&gt; !null&quot;)
+    public static &lt;T&gt; Function&lt;T, ValueBuilder&lt;T&gt;&gt; ofInstanceFunction() {
+<span class="fc" id="L59">        return new ValueBuilderOfInstanceFunction&lt;&gt;();</span>
+    }
+
+    /**
+     * Sets the builder to use the given instance. The {@link #get()} method will return this instance as is.
+     *
+     * @return This {@code ValueBuilder} itself, for chaining convenience.
+     */
+    @NotNull
+    @Contract(&quot;_ -&gt; !null&quot;)
+    public ValueBuilder&lt;T&gt; set(@Nullable T value) {
+<span class="fc" id="L70">        return set(Suppliers.ofInstance(value));</span>
+    }
+
+    /**
+     * Use the given builder to get the value of the instance. The builder is not invoked to build the value immediately,
+     * it will be invoked when &lt;em&gt;this&lt;/em&gt; builder's {@link #get()} method is invoked.
+     *
+     * @return This {@code ValueBuilder} itself, for chaining convenience.
+     */
+    @NotNull
+    public ValueBuilder&lt;T&gt; set(@NotNull Builder&lt;T&gt; valueBuilder) {
+<span class="fc" id="L81">        return set((Supplier&lt;T&gt;)valueBuilder);</span>
+    }
+
+    /**
+     * Helper method to set the value that will be used by {@link #get()} to return a new instance.
+     *
+     * This is a helper method which {@link #set(Builder)} and {@link #set(Object)} delegate to. The public interface
+     * does not allow generic {@link Supplier} objects to be used to set the value.
+     *
+     * @return This {@code ValueBuilder} itself, for chaining convenience.
+     */
+    @NotNull
+    protected abstract ValueBuilder&lt;T&gt; set(@NotNull Supplier&lt;T&gt; value);
+
+    /**
+     * Apply the given function to {@code this} object, and return {@code this} object again.
+     *
+     * &lt;p&gt;
+     * This is simply a way to add some arbitrary code in the middle of a chain of method invocations.
+     * You could use the {@link Function} to perform some complex logic to configure the builder, for instance.
+     *
+     * &lt;p&gt;
+     * The return value of the function is ignored, but for safety and clarity, it should be a void return.
+     *
+     * @param function The {@link Function} to be invoked on {@code this} object.
+     *
+     * @return This {@code ValueBuilder} itself, for chaining convenience.
+     */
+    @NotNull
+    protected abstract ValueBuilder&lt;T&gt; apply(@NotNull Function&lt;ValueBuilder&lt;T&gt;, Void&gt; function);
+
+    @NotNull
+    protected abstract ValueBuilder&lt;T&gt; maybeSet(@NotNull Supplier&lt;T&gt; value, boolean doSet);
+
+    @NotNull
+    public ValueBuilder&lt;T&gt; maybeSet(@Nullable T value, boolean doSet) {
+<span class="fc" id="L117">        this.maybeSet(Suppliers.ofInstance(value), doSet);</span>
+<span class="fc" id="L118">        return this;</span>
+    }
+
+    /**
+     * Build the value (if needed) and return it. If a value was given (as with {@link #set(Object)}), then it is simply
+     * returned. If a builder for a value was given (as with {@link #set(Builder)}), then this method delegates to
+     * that's builder's {@link Builder#get()} method.
+     *
+     * @return The built value.
+     */
+    @Nullable
+    @Override
+    public abstract T get();
+
+    /**
+     * Returns the top-level non-conditional builder.
+     */
+    @NotNull
+    @Contract(&quot;-&gt; !null&quot;)
+    public abstract ValueBuilder&lt;T&gt; always();
+
+    /**
+     * Returns a builder which either does or doesn't delegate to this builder based on the given boolean.
+     * @param yes If {@code true}, then methods invoked on the returned builder will modify the state of {@code this}
+     *            builder. Otherwise, methods invoked on the returned builder will not modify state.
+     */
+    @NotNull
+    public abstract ValueBuilder&lt;T&gt; maybe(boolean yes);
+
+    /**
+     * Returns the parent builder of a conditional builder. This is not necessarily the originating top level
+     * builder if you have nested (or rather chained) calls to {@link #maybe(boolean)}.
+     */
+    @NotNull
+    public abstract ValueBuilder&lt;T&gt; endMaybe();
+
+
+    protected static class DefaultValueBuilder&lt;T&gt; extends ValueBuilder&lt;T&gt; {
+
+        /**
+         * A supplier for the value. Suppliers are used to encapsulate the fact that you can
+         * set the value using either a value directly, or a builder for the value.
+         */
+<span class="fc" id="L161">        @NotNull</span>
+        private Supplier&lt;T&gt; value = Suppliers.ofInstance(null);
+
+        /**
+         * Create a new instance and {@linkplain #set(Object) set} the value to the given {@code value}.
+         */
+<span class="fc" id="L167">        protected DefaultValueBuilder(@Nullable T value) {</span>
+<span class="fc" id="L168">            set(value);</span>
+<span class="fc" id="L169">        }</span>
+
+        /**
+         * Create a new instance and {@linkplain #set(Builder) set} the value using the given {@code builder}.
+         * The builder is not invoked to build the value immediately, it will be invoked when &lt;em&gt;this&lt;/em&gt; builder's
+         * {@link #get()} method is invoked.
+         */
+<span class="fc" id="L176">        protected DefaultValueBuilder(Builder&lt;T&gt; builder) {</span>
+<span class="fc" id="L177">            set(builder);</span>
+<span class="fc" id="L178">        }</span>
+
+        @NotNull
+        @Override
+        protected ValueBuilder&lt;T&gt; set(@NotNull Supplier&lt;T&gt; value) {
+<span class="fc" id="L183">            this.value = value;</span>
+<span class="fc" id="L184">            return this;</span>
+        }
+
+        @NotNull
+        @Override
+        protected ValueBuilder&lt;T&gt; maybeSet(@NotNull Supplier&lt;T&gt; value, boolean doSet) {
+<span class="fc bfc" id="L190" title="All 2 branches covered.">            if(doSet) {</span>
+<span class="fc" id="L191">                set(value);</span>
+            }
+<span class="fc" id="L193">            return this;</span>
+        }
+
+        @Nullable
+        @Override
+        public T get() {
+<span class="fc" id="L199">            return value.get();</span>
+        }
+
+        @Override
+        @NotNull
+        protected ValueBuilder&lt;T&gt; apply(@NotNull Function&lt;ValueBuilder&lt;T&gt;, Void&gt; function) {
+<span class="fc" id="L205">            function.apply(this);</span>
+<span class="fc" id="L206">            return this;</span>
+        }
+
+
+        /**
+         * Returns itself.
+         */
+        @Override
+        @NotNull
+        @Contract(pure=true)
+        public ValueBuilder&lt;T&gt; always() {
+<span class="fc" id="L217">            return this;</span>
+        }
+
+        /**
+         * Returns either {@code this} object itself, or a new {@link NeverValueBuilder} if {@code yes} is {@code false}.
+         */
+        @Override
+        @NotNull
+        public ValueBuilder&lt;T&gt; maybe(boolean yes) {
+<span class="fc bfc" id="L226" title="All 2 branches covered.">            if(yes) {</span>
+<span class="fc" id="L227">                return this;</span>
+            } else {
+<span class="fc" id="L229">                return new NeverValueBuilder&lt;&gt;(this, this);</span>
+            }
+        }
+
+        @NotNull
+        @Override
+        @Contract(pure=true)
+        public ValueBuilder&lt;T&gt; endMaybe() {
+<span class="fc" id="L237">            return this;</span>
+        }
+    }
+
+    /**
+     * A {@link ValueBuilder} which doesn't actually do anything.
+     */
+    protected static class NeverValueBuilder&lt;T&gt; extends ValueBuilder&lt;T&gt; {
+
+        @NotNull
+        private final ValueBuilder&lt;T&gt; alwaysBuilder;
+
+        @NotNull
+        private final ValueBuilder&lt;T&gt; parent;
+
+<span class="fc" id="L252">        protected NeverValueBuilder(@NotNull ValueBuilder&lt;T&gt; alwaysBuilder, @NotNull ValueBuilder&lt;T&gt; parent) {</span>
+<span class="fc" id="L253">            this.alwaysBuilder = alwaysBuilder;</span>
+<span class="fc" id="L254">            this.parent = parent;</span>
+<span class="fc" id="L255">        }</span>
+
+        @NotNull
+        @Override
+        protected ValueBuilder&lt;T&gt; set(@NotNull Supplier&lt;T&gt; value) {
+<span class="fc" id="L260">            return this;</span>
+        }
+
+        @NotNull
+        @Override
+        protected ValueBuilder&lt;T&gt; apply(@NotNull Function&lt;ValueBuilder&lt;T&gt;, Void&gt; function) {
+<span class="fc" id="L266">            return this;</span>
+        }
+
+        @NotNull
+        @Override
+        protected ValueBuilder&lt;T&gt; maybeSet(@NotNull Supplier&lt;T&gt; value, boolean doSet) {
+<span class="fc" id="L272">            return this;</span>
+        }
+
+        @Nullable
+        @Override
+        public T get() {
+<span class="fc" id="L278">            return alwaysBuilder.get();</span>
+        }
+
+        @NotNull
+        @Override
+        public ValueBuilder&lt;T&gt; always() {
+<span class="fc" id="L284">            return alwaysBuilder;</span>
+        }
+
+        @NotNull
+        @Override
+        public ValueBuilder&lt;T&gt; maybe(boolean yes) {
+<span class="fc" id="L290">            return new NeverValueBuilder&lt;&gt;(alwaysBuilder, this);</span>
+        }
+
+        @NotNull
+        @Override
+        public ValueBuilder&lt;T&gt; endMaybe() {
+<span class="fc" id="L296">            return parent;</span>
+        }
+    }
+
+    /**
+     * A function that maps any value to a {@link ValueBuilder} {@linkplain #ofInstance(Object) of that instance}.
+     */
+<span class="fc" id="L303">    protected static class ValueBuilderOfInstanceFunction&lt;T&gt; implements Function&lt;T, ValueBuilder&lt;T&gt;&gt; {</span>
+        @Nullable
+        @Override
+        public ValueBuilder&lt;T&gt; apply(@Nullable T input) {
+<span class="fc" id="L307">            return ofInstance(input);</span>
+        }
+    }
+
+    /**
+     * A function that maps any builder of a value to a {@link ValueBuilder} {@linkplain #ofBuilder(Builder) of that builder}.
+     */
+<span class="fc" id="L314">    protected static class ValueBuilderOfBuilderFunction&lt;T&gt; implements Function&lt;Builder&lt;T&gt;, ValueBuilder&lt;T&gt;&gt; {</span>
+        @Nullable
+        @Override
+        public ValueBuilder&lt;T&gt; apply(@Nullable Builder&lt;T&gt; input) {
+<span class="fc" id="L318">            return ofBuilder(input);</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>
