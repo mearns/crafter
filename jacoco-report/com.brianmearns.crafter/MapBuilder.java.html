@@ -292,19 +292,19 @@ import java.util.*;
         @NotNull
         @Override
         public MapBuilder&lt;K, V&gt; maybe(boolean yes) {
-<span class="nc" id="L295">            return new NeverMapBuilder&lt;&gt;(alwaysBuilder, this);</span>
+<span class="fc" id="L295">            return new NeverMapBuilder&lt;&gt;(alwaysBuilder, this);</span>
         }
 
         @NotNull
         @Override
         public MapBuilder&lt;K, V&gt; endMaybe() {
-<span class="nc" id="L301">            return parent;</span>
+<span class="fc" id="L301">            return parent;</span>
         }
 
         @NotNull
         @Override
         public MapBuilder&lt;K, V&gt; always() {
-<span class="nc" id="L307">            return alwaysBuilder;</span>
+<span class="fc" id="L307">            return alwaysBuilder;</span>
         }
     }
 }
