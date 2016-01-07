@@ -29,8 +29,10 @@ public interface Builder<T> extends Supplier<T> {
      * based on the current configuration of this {@code Builder} object.
      *
      * @return A newly created instance of type {@code T}.
+     * @throws IncompleteBuilderException If the builder has not yet been configured sufficiently to
+     *  create an instance.
      */
     @Override
     @Nullable
-    T get();
+    T get() throws IncompleteBuilderException ;
 }

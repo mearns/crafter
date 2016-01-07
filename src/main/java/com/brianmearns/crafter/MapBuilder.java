@@ -150,7 +150,7 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
 
     @Override
     @NotNull
-    public abstract Map<K, V> get();
+    public abstract Map<K, V> get() throws IncompleteBuilderException;
 
 
     @NotNull
@@ -173,7 +173,7 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
         @Override
         @NotNull
         @Contract("-> !null")
-        public Map<K, V> get() {
+        public Map<K, V> get() throws IncompleteBuilderException {
             return buildMap(entries);
         }
 
@@ -285,7 +285,7 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
 
         @NotNull
         @Override
-        public Map<K, V> get() {
+        public Map<K, V> get() throws IncompleteBuilderException {
             return alwaysBuilder.get();
         }
 

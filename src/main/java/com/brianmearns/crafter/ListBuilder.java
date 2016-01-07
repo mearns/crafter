@@ -259,7 +259,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
     @NotNull
     @Contract("-> !null")
     @Override
-    public abstract List<T> get();
+    public abstract List<T> get() throws IncompleteBuilderException;
 
     /**
      * Adds the given element builder for the next item in the list, if and only if the
@@ -421,7 +421,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
          */
         @NotNull
         @Override
-        public List<T> get() {
+        public List<T> get() throws IncompleteBuilderException {
             return get(ImmutableList.copyOf(elements));
         }
 
@@ -550,7 +550,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
          */
         @Override
         @NotNull
-        public List<T> get() {
+        public List<T> get() throws IncompleteBuilderException {
             return alwaysBuilder.get();
         }
     }

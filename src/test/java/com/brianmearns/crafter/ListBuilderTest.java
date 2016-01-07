@@ -121,9 +121,9 @@ public class ListBuilderTest {
     public void testAdd_Builder_T() throws Exception {
         ListBuilder<String> uut = ListBuilder.create();
         ListBuilder<String> res = uut
-                .add(ValueBuilder.ofInstance("foo"))
-                .add(ValueBuilder.ofInstance("bar"))
-                .add(ValueBuilder.ofInstance("baz"));
+                .add(ValueBuilder.create("foo"))
+                .add(ValueBuilder.create("bar"))
+                .add(ValueBuilder.create("baz"));
 
         assertSame("Expect value returned by add(T) is the original builder.", uut, res);
         assertArrayEquals("Expected add to add the given elements to the list, in order.", new String[]{"foo", "bar", "baz"}, uut.get().toArray());
@@ -144,9 +144,9 @@ public class ListBuilderTest {
         final String[] expected = new String[]{"burley", "hurley", "Fran"};
         @SuppressWarnings("unchecked")
         final Builder<String>[] builders = new Builder[] {
-                ValueBuilder.ofInstance(expected[0]),
-                ValueBuilder.ofInstance(expected[1]),
-                ValueBuilder.ofInstance(expected[2])
+                ValueBuilder.create(expected[0]),
+                ValueBuilder.create(expected[1]),
+                ValueBuilder.create(expected[2])
         };
         ListBuilder<String> uut = ListBuilder.create();
         ListBuilder<String> res = uut.addBuilders(builders);
@@ -228,7 +228,7 @@ public class ListBuilderTest {
     @Test
     public void testMaybeAdd_Builder_true() {
         ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(1).add(7);
-        ListBuilder<Integer> res = uut.maybeAdd(ValueBuilder.ofInstance(5), true);
+        ListBuilder<Integer> res = uut.maybeAdd(ValueBuilder.create(5), true);
 
         assertSame("The maybeAdd method should return the instance it was invoked on.", uut, res);
         assertArrayEquals("Expected the maybeAdd method to change the state of the builder.",
@@ -249,7 +249,7 @@ public class ListBuilderTest {
     @Test
     public void testMaybeAdd_Builder_false() {
         ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(15).add(-5);
-        ListBuilder<Integer> res = uut.maybeAdd(ValueBuilder.ofInstance(8), false);
+        ListBuilder<Integer> res = uut.maybeAdd(ValueBuilder.create(8), false);
         uut.add(32);
 
         assertSame("The maybeAdd method should return the instance it was invoked on.", uut, res);

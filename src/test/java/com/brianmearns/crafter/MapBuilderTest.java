@@ -45,7 +45,7 @@ public class MapBuilderTest {
     @Test
     public void test_put_builder() {
         MapBuilder<Integer, String> uut = MapBuilder.create(Integer.class, String.class);
-        MapBuilder<Integer, String> res = uut.put(1, "andromeda").put(2, ValueBuilder.ofInstance("Saphron"));
+        MapBuilder<Integer, String> res = uut.put(1, "andromeda").put(2, ValueBuilder.create("Saphron"));
         Map<Integer, String> map = res.get();
 
         assertSame("Expected return value of put(K,V) to be the same as the original object.", uut, res);
@@ -75,7 +75,7 @@ public class MapBuilderTest {
     public void test_maybe_put_Builder_true() {
         MapBuilder<Integer, String> uut = MapBuilder.create(Integer.class, String.class);
         MapBuilder<Integer, String> res = uut.put(1, "andromeda")
-                .maybePut(2, ValueBuilder.ofInstance("Saphron"), true)
+                .maybePut(2, ValueBuilder.create("Saphron"), true)
                 .put(3, "---");
         Map<Integer, String> map = res.get();
 
@@ -106,7 +106,7 @@ public class MapBuilderTest {
     public void test_maybe_put_Builder_false() {
         MapBuilder<Integer, String> uut = MapBuilder.create(Integer.class, String.class);
         MapBuilder<Integer, String> res = uut.put(1, "andromeda")
-                .maybePut(2, ValueBuilder.ofInstance("Saphron"), false)
+                .maybePut(2, ValueBuilder.create("Saphron"), false)
                 .put(3, "---");
         Map<Integer, String> map = res.get();
 

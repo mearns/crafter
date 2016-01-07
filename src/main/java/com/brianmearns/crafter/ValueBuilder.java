@@ -1,6 +1,7 @@
 package com.brianmearns.crafter;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import org.jetbrains.annotations.Contract;
@@ -24,8 +25,7 @@ public abstract class ValueBuilder<T> implements Builder<T> {
      * @param <T> The type which is built by the returned builder.
      */
     @NotNull
-    @Contract("_ -> !null")
-    public static <T> ValueBuilder<T> ofInstance(T value) {
+    public static <T> ValueBuilder<T> create(T value) {
         return new DefaultValueBuilder<>(value);
     }
 
@@ -34,23 +34,37 @@ public abstract class ValueBuilder<T> implements Builder<T> {
      * the {@link #get()} method is invoked, it will delegate to the given object.
      */
     @NotNull
-    @Contract("_ -> !null")
-    public static <T> ValueBuilder<T> ofBuilder(Builder<T> value) {
+    public static <T> ValueBuilder<T> create(Builder<T> value) {
         return new DefaultValueBuilder<>(value);
     }
 
     /**
-     * Returns a function which maps Builders of objects to ValueBuilders, using the {@link #ofBuilder(Builder)}
+     * Create a new instance that does not yet have the value set.
+     */
+    @NotNull
+    public static <T> ValueBuilder<T> create() {
+        return new DefaultValueBuilder<>();
+    }
+
+    /**
+     * Create a new instance that does not yet have the value set.
+     */
+    @NotNull
+    public static <T> ValueBuilder<T> create(Class<T> cls) {
+        return new DefaultValueBuilder<>();
+    }
+
+    /**
+     * Returns a function which maps Builders of objects to ValueBuilders, using the {@link #create(Builder)}
      * method.
      */
     @NotNull
-    @Contract(" -> !null")
     public static <T> Function<Builder<T>, ValueBuilder<T>> ofBuilderFunction() {
         return new ValueBuilderOfBuilderFunction<>();
     }
 
     /**
-     * Returns a function which maps values to ValueBuilders of that value, using the {@link #ofInstance(Object)}
+     * Returns a function which maps values to ValueBuilders of that value, using the {@link #create(Object)}
      * method.
      */
     @NotNull
@@ -124,10 +138,11 @@ public abstract class ValueBuilder<T> implements Builder<T> {
      * that's builder's {@link Builder#get()} method.
      *
      * @return The built value.
+     * @throws IncompleteBuilderException if a value has not yet been set for the builder.
      */
     @Nullable
     @Override
-    public abstract T get();
+    public abstract T get() throws IncompleteBuilderException ;
 
     /**
      * Returns the top-level non-conditional builder.
@@ -159,13 +174,17 @@ public abstract class ValueBuilder<T> implements Builder<T> {
          * set the value using either a value directly, or a builder for the value.
          */
         @NotNull
-        private Supplier<T> value = Suppliers.ofInstance(null);
+        private Optional<Supplier<T>> value = Optional.absent();
 
         /**
          * Create a new instance and {@linkplain #set(Object) set} the value to the given {@code value}.
          */
         protected DefaultValueBuilder(@Nullable T value) {
             set(value);
+        }
+
+        protected DefaultValueBuilder() {
+
         }
 
         /**
@@ -180,7 +199,7 @@ public abstract class ValueBuilder<T> implements Builder<T> {
         @NotNull
         @Override
         protected ValueBuilder<T> set(@NotNull Supplier<T> value) {
-            this.value = value;
+            this.value = Optional.of(value);
             return this;
         }
 
@@ -195,8 +214,11 @@ public abstract class ValueBuilder<T> implements Builder<T> {
 
         @Nullable
         @Override
-        public T get() {
-            return value.get();
+        public T get() throws IncompleteBuilderException {
+            if(value.isPresent()) {
+                return value.get().get();
+            }
+            throw new IncompleteBuilderException("Builder value has not yet been set.");
         }
 
         @Override
@@ -274,7 +296,7 @@ public abstract class ValueBuilder<T> implements Builder<T> {
 
         @Nullable
         @Override
-        public T get() {
+        public T get() throws IncompleteBuilderException  {
             return alwaysBuilder.get();
         }
 
@@ -298,24 +320,24 @@ public abstract class ValueBuilder<T> implements Builder<T> {
     }
 
     /**
-     * A function that maps any value to a {@link ValueBuilder} {@linkplain #ofInstance(Object) of that instance}.
+     * A function that maps any value to a {@link ValueBuilder} {@linkplain #create(Object) of that instance}.
      */
     protected static class ValueBuilderOfInstanceFunction<T> implements Function<T, ValueBuilder<T>> {
         @Nullable
         @Override
         public ValueBuilder<T> apply(@Nullable T input) {
-            return ofInstance(input);
+            return create(input);
         }
     }
 
     /**
-     * A function that maps any builder of a value to a {@link ValueBuilder} {@linkplain #ofBuilder(Builder) of that builder}.
+     * A function that maps any builder of a value to a {@link ValueBuilder} {@linkplain #create(Builder) of that builder}.
      */
     protected static class ValueBuilderOfBuilderFunction<T> implements Function<Builder<T>, ValueBuilder<T>> {
         @Nullable
         @Override
         public ValueBuilder<T> apply(@Nullable Builder<T> input) {
-            return ofBuilder(input);
+            return create(input);
         }
     }
 

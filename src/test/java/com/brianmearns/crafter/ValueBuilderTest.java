@@ -14,16 +14,16 @@ public class ValueBuilderTest {
 
     @Test
     public void testConstructor_Builder() {
-        ValueBuilder<String> builder = ValueBuilder.ofInstance("Foobartle");
-        ValueBuilder<String> uut = ValueBuilder.ofBuilder(builder);
+        ValueBuilder<String> builder = ValueBuilder.create("Foobartle");
+        ValueBuilder<String> uut = ValueBuilder.create(builder);
 
         assertEquals("Expected built value to be the value that the builder passed into contructor builds.", "Foobartle", uut.get());
     }
 
     @Test
     public void testConstructor_Builder_changeBuilderAfter() {
-        ValueBuilder<String> builder = ValueBuilder.ofInstance("Foobartle");
-        ValueBuilder<String> uut = ValueBuilder.ofBuilder(builder);
+        ValueBuilder<String> builder = ValueBuilder.create("Foobartle");
+        ValueBuilder<String> uut = ValueBuilder.create(builder);
 
         builder.set("This is my real value.");
 
@@ -59,7 +59,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testApply() {
-        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(1);
+        ValueBuilder<Integer> uut = ValueBuilder.create(1);
         ValueBuilder<Integer> res = uut.apply(new Function<ValueBuilder<Integer>, Void>() {
             @Nullable
             @Override
@@ -75,7 +75,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybeSet_true() {
-        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = ValueBuilder.create(5);
         ValueBuilder<Integer> res = uut.maybeSet(100, true);
 
         assertSame("The maybeSet method should return the instance it was invoked on.", uut, res);
@@ -84,7 +84,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybeSet_Builder_true() {
-        ValueBuilder<Integer> uut = ValueBuilder.ofBuilder(ValueBuilder.ofInstance(12));
+        ValueBuilder<Integer> uut = ValueBuilder.create(ValueBuilder.create(12));
         ValueBuilder<Integer> res = uut.maybeSet(121, true);
 
         assertSame("The maybeSet method should return the instance it was invoked on.", uut, res);
@@ -93,7 +93,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybeSet_false() {
-        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = ValueBuilder.create(5);
         ValueBuilder<Integer> res = uut.maybeSet(100, false);
 
         assertSame("The maybeSet method should return the instance it was invoked on.", uut, res);
@@ -102,7 +102,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybeSet_Builder_false() {
-        ValueBuilder<Integer> uut = ValueBuilder.ofBuilder(ValueBuilder.ofInstance(12));
+        ValueBuilder<Integer> uut = ValueBuilder.create(ValueBuilder.create(12));
         ValueBuilder<Integer> res = uut.maybeSet(121, false);
 
         assertSame("The maybeSet method should return the instance it was invoked on.", uut, res);
@@ -111,7 +111,7 @@ public class ValueBuilderTest {
 
     @Test
     public void test_always() {
-        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = ValueBuilder.create(5);
         ValueBuilder<Integer> res = uut.always();
 
         assertSame("The always method should return the instance it was invoked on.", uut, res);
@@ -119,7 +119,7 @@ public class ValueBuilderTest {
 
     @Test
     public void test_endMaybe() {
-        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = ValueBuilder.create(5);
         ValueBuilder<Integer> res = uut.endMaybe();
 
         assertSame("The always method should return the instance it was invoked on.", uut, res);
@@ -127,7 +127,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybe_true() {
-        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = ValueBuilder.create(5);
         ValueBuilder<Integer> res = uut.maybe(true);
 
         assertSame("The maybe method should return the instance it was invoked on.", uut, res);
@@ -135,7 +135,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybe_false_set() {
-        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> orig = ValueBuilder.create(5);
         ValueBuilder<Integer> uut = orig.maybe(false);
         ValueBuilder<Integer> res = uut.set(81);
 
@@ -145,7 +145,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybe_false_maybeSet_true() {
-        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> orig = ValueBuilder.create(5);
         ValueBuilder<Integer> uut = orig.maybe(false);
         ValueBuilder<Integer> res = uut.maybeSet(81, true);
 
@@ -155,7 +155,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybe_false_maybeSet_false() {
-        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> orig = ValueBuilder.create(5);
         ValueBuilder<Integer> uut = orig.maybe(false);
         ValueBuilder<Integer> res = uut.maybeSet(81, false);
 
@@ -165,7 +165,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybe_false_get() {
-        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> orig = ValueBuilder.create(5);
         ValueBuilder<Integer> uut = orig.maybe(false);
         orig.set(15);
 
@@ -174,7 +174,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybe_false_always() {
-        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> orig = ValueBuilder.create(5);
         ValueBuilder<Integer> uut = orig.maybe(false);
         ValueBuilder<Integer> res = uut.always();
 
@@ -183,7 +183,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybe_false_maybe_true() {
-        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> orig = ValueBuilder.create(5);
         ValueBuilder<Integer> uut = orig.maybe(false).maybe(true);
         uut.set(51);
 
@@ -193,7 +193,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybe_false_endMaybe() {
-        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = ValueBuilder.create(5);
         ValueBuilder<Integer> res = uut.maybe(false).endMaybe();
 
         assertSame("Expected never builder to return parent from endMaybe()", uut, res);
@@ -201,7 +201,7 @@ public class ValueBuilderTest {
 
     @Test
     public void testMaybe_false_apply() {
-        ValueBuilder<Integer> orig = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> orig = ValueBuilder.create(5);
         ValueBuilder<Integer> uut = orig.maybe(false);
         InvokeCountingFunction<ValueBuilder<Integer>, Void> func = InvokeCountingFunction.reallyDoNothing();
         ValueBuilder<Integer> res = uut.apply(func);
@@ -212,10 +212,20 @@ public class ValueBuilderTest {
 
     @Test
     public void test_nested_neverBuilders() {
-        ValueBuilder<Integer> uut = ValueBuilder.ofInstance(5);
+        ValueBuilder<Integer> uut = ValueBuilder.create(5);
         ValueBuilder<Integer> res = uut.maybe(false).maybe(false).maybe(false).endMaybe().endMaybe().endMaybe();
 
         assertSame("Expected never builder correctly nest and un-nest with endMaybe", uut, res);
+    }
+
+    @Test(expected = IncompleteBuilderException.class)
+    public void test_create() {
+        ValueBuilder.create().get();
+    }
+
+    @Test(expected = IncompleteBuilderException.class)
+    public void test_create_Class() {
+        ValueBuilder.create(Integer.class).get();
     }
 
 }
