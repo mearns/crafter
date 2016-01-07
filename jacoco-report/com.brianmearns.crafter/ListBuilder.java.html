@@ -259,7 +259,7 @@ import java.util.*;
     @NotNull
     @Contract(&quot;-&gt; !null&quot;)
     @Override
-    public abstract List&lt;T&gt; get();
+    public abstract List&lt;T&gt; get() throws IncompleteBuilderException;
 
     /**
      * Adds the given element builder for the next item in the list, if and only if the
@@ -421,7 +421,7 @@ import java.util.*;
          */
         @NotNull
         @Override
-        public List&lt;T&gt; get() {
+        public List&lt;T&gt; get() throws IncompleteBuilderException {
 <span class="fc" id="L425">            return get(ImmutableList.copyOf(elements));</span>
         }
 
@@ -550,7 +550,7 @@ import java.util.*;
          */
         @Override
         @NotNull
-        public List&lt;T&gt; get() {
+        public List&lt;T&gt; get() throws IncompleteBuilderException {
 <span class="fc" id="L554">            return alwaysBuilder.get();</span>
         }
     }

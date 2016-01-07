@@ -150,7 +150,7 @@ import java.util.*;
 
     @Override
     @NotNull
-    public abstract Map&lt;K, V&gt; get();
+    public abstract Map&lt;K, V&gt; get() throws IncompleteBuilderException;
 
 
     @NotNull
@@ -173,7 +173,7 @@ import java.util.*;
         @Override
         @NotNull
         @Contract(&quot;-&gt; !null&quot;)
-        public Map&lt;K, V&gt; get() {
+        public Map&lt;K, V&gt; get() throws IncompleteBuilderException {
 <span class="fc" id="L177">            return buildMap(entries);</span>
         }
 
@@ -285,7 +285,7 @@ import java.util.*;
 
         @NotNull
         @Override
-        public Map&lt;K, V&gt; get() {
+        public Map&lt;K, V&gt; get() throws IncompleteBuilderException {
 <span class="fc" id="L289">            return alwaysBuilder.get();</span>
         }
 
