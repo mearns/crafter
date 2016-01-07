@@ -4,7 +4,7 @@ import com.google.common.base.Supplier;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A {@code Builder} implements the builder design pattern, in which one object is used to
+ * A {@code BuilderInterface} implements the builder design pattern, in which one object is used to
  * construct instances of a particular type, after being setup step by step with values to
  * transfer to the built instance.
  *
@@ -22,11 +22,11 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Brian Mearns <bmearns@ieee.org>
  */
-public interface Builder<T> extends Supplier<T> {
+public interface BuilderInterface<T> extends Supplier<T> {
 
     /**
      * This is the method that should actually build and return an instance of type {@code T},
-     * based on the current configuration of this {@code Builder} object.
+     * based on the current configuration of this {@code BuilderInterface} object.
      *
      * @return A newly created instance of type {@code T}.
      * @throws IncompleteBuilderException If the builder has not yet been configured sufficiently to

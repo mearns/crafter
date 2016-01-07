@@ -15,12 +15,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 /**
- * A {@link Builder} for a list of values.
+ * A {@link BuilderInterface} for a list of values.
  *
  * @author Brian Mearns <bmearns@ieee.org>
  */
 @SuppressWarnings("unused")
-public abstract class ListBuilder<T> implements Builder<List<T>> {
+public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
 
     /**
      * Static factory method to create an instance.
@@ -112,10 +112,10 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
     }
 
     /**
-     * Add all of the given {@link Builder Builders}, in order, as builders of element values to the end of the list.
+     * Add all of the given {@link BuilderInterface Builders}, in order, as builders of element values to the end of the list.
      *
      * <p>
-     * As with {@link #add(Builder)}, this does not invoke any of the builders immediately to build the element value.
+     * As with {@link #add(BuilderInterface)}, this does not invoke any of the builders immediately to build the element value.
      * Each builder will be invoked once during a call to {@link #get()}.
      *
      * @param elements An {@link Iterable} of the builders to add.
@@ -123,12 +123,12 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      * @return {@code this} object itself, for chaining convenience.
      *
      * @see #addBuilders(Iterator)
-     * @see #addBuilders(Builder[])
+     * @see #addBuilders(BuilderInterface[])
      * @see #addAll(Iterable)
      */
     @NotNull
     @Contract("_ -> !null")
-    public ListBuilder<T> addBuilders(@NotNull Iterable<? extends Builder<? extends T>> elements) {
+    public ListBuilder<T> addBuilders(@NotNull Iterable<? extends BuilderInterface<? extends T>> elements) {
         return addSuppliers(elements);
     }
 
@@ -150,10 +150,10 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
     }
 
     /**
-     * Add all of the given {@link Builder Builders}, in order, as builders of element values to the end of the list.
+     * Add all of the given {@link BuilderInterface Builders}, in order, as builders of element values to the end of the list.
      *
      * <p>
-     * As with {@link #add(Builder)}, this does not invoke any of the builders immediately to build the element value.
+     * As with {@link #add(BuilderInterface)}, this does not invoke any of the builders immediately to build the element value.
      * Each builder will be invoked once during a call to {@link #get()}.
      *
      * @param elements An {@link Iterator} over the builders to add.
@@ -161,12 +161,12 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      * @return {@code this} object itself, for chaining convenience.
      *
      * @see #addBuilders(Iterable)
-     * @see #addBuilders(Builder[])
+     * @see #addBuilders(BuilderInterface[])
      * @see #addAll(Iterator)
      */
     @NotNull
     @Contract("_ -> !null")
-    public ListBuilder<T> addBuilders(@NotNull Iterator<? extends Builder<? extends T>> elements) {
+    public ListBuilder<T> addBuilders(@NotNull Iterator<? extends BuilderInterface<? extends T>> elements) {
         return addSuppliers(elements);
     }
 
@@ -179,7 +179,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      *
      * @see #addAll(Iterable)
      * @see #addAll(Iterator)
-     * @see #addBuilders(Builder[])
+     * @see #addBuilders(BuilderInterface[])
      */
     @NotNull
     @Contract("_ -> !null")
@@ -188,10 +188,10 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
     }
 
     /**
-     * Add all of the given {@link Builder Builders}, in order, as builders of element values to the end of the list.
+     * Add all of the given {@link BuilderInterface Builders}, in order, as builders of element values to the end of the list.
      *
      * <p>
-     * As with {@link #add(Builder)}, this does not invoke any of the builders immediately to build the element value.
+     * As with {@link #add(BuilderInterface)}, this does not invoke any of the builders immediately to build the element value.
      * Each builder will be invoked once during a call to {@link #get()}.
      *
      * @param elements An array of the builders to add.
@@ -204,7 +204,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_ -> !null")
-    public ListBuilder<T> addBuilders(@NotNull Builder<? extends T>[] elements) {
+    public ListBuilder<T> addBuilders(@NotNull BuilderInterface<? extends T>[] elements) {
         return addSuppliers(elements);
     }
 
@@ -222,8 +222,8 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
     }
 
     /**
-     * Add the given {@link Builder} as a builder for the next item in the list. The builder is not invoked to build
-     * the value immediately, its {@link Builder#get()} method is invoked to build the element value only when <em>this</em>
+     * Add the given {@link BuilderInterface} as a builder for the next item in the list. The builder is not invoked to build
+     * the value immediately, its {@link BuilderInterface#get()} method is invoked to build the element value only when <em>this</em>
      * object's {@link #get()} method is invoked to build a list of values.
      *
      * @param elementBuilder Builder for the element to put at the end of the current list of elements.
@@ -232,7 +232,7 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      */
     @NotNull
     @Contract("_ -> !null")
-    public ListBuilder<T> add(@NotNull Builder<? extends T> elementBuilder) {
+    public ListBuilder<T> add(@NotNull BuilderInterface<? extends T> elementBuilder) {
         return add((Supplier<? extends T>) elementBuilder);
     }
 
@@ -265,14 +265,14 @@ public abstract class ListBuilder<T> implements Builder<List<T>> {
      * Adds the given element builder for the next item in the list, if and only if the
      * given boolean is {@code true}. Otherwise has no effect on the state of the builder.
      *
-     * @param element The element value to {@link #add(Builder)}.
+     * @param element The element value to {@link #add(BuilderInterface)}.
      * @param add Whether or not to add the element.
      *
      * @return {@code this} object itself, for chaining convenience.
      */
     @NotNull
     @Contract("_, _ -> !null")
-    public ListBuilder<T> maybeAdd(@NotNull Builder<? extends T> element, boolean add) {
+    public ListBuilder<T> maybeAdd(@NotNull BuilderInterface<? extends T> element, boolean add) {
         return maybeAdd((Supplier<? extends T>) element, add);
     }
 

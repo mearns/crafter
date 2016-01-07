@@ -10,12 +10,12 @@ import org.jetbrains.annotations.Nullable;
 
 
 /**
- * A simple {@link Builder} for a single value. This is generally used as a utility inside another builder.
+ * A simple {@link BuilderInterface} for a single value. This is generally used as a utility inside another builder.
  *
  * @author Brian Mearns <bmearns@ieee.org>
  */
 @SuppressWarnings("unused")
-public abstract class ValueBuilder<T> implements Builder<T> {
+public abstract class ValueBuilder<T> implements BuilderInterface<T> {
 
     /**
      * Instantiate a new {@link ValueBuilder} initialized with the given <code>value</code>. I.e., when
@@ -34,7 +34,7 @@ public abstract class ValueBuilder<T> implements Builder<T> {
      * the {@link #get()} method is invoked, it will delegate to the given object.
      */
     @NotNull
-    public static <T> ValueBuilder<T> create(Builder<T> value) {
+    public static <T> ValueBuilder<T> create(BuilderInterface<T> value) {
         return new DefaultValueBuilder<>(value);
     }
 
@@ -55,11 +55,11 @@ public abstract class ValueBuilder<T> implements Builder<T> {
     }
 
     /**
-     * Returns a function which maps Builders of objects to ValueBuilders, using the {@link #create(Builder)}
+     * Returns a function which maps Builders of objects to ValueBuilders, using the {@link #create(BuilderInterface)}
      * method.
      */
     @NotNull
-    public static <T> Function<Builder<T>, ValueBuilder<T>> ofBuilderFunction() {
+    public static <T> Function<BuilderInterface<T>, ValueBuilder<T>> ofBuilderFunction() {
         return new ValueBuilderOfBuilderFunction<>();
     }
 
@@ -91,14 +91,14 @@ public abstract class ValueBuilder<T> implements Builder<T> {
      * @return This {@code ValueBuilder} itself, for chaining convenience.
      */
     @NotNull
-    public ValueBuilder<T> set(@NotNull Builder<T> valueBuilder) {
+    public ValueBuilder<T> set(@NotNull BuilderInterface<T> valueBuilder) {
         return set((Supplier<T>)valueBuilder);
     }
 
     /**
      * Helper method to set the value that will be used by {@link #get()} to return a new instance.
      *
-     * This is a helper method which {@link #set(Builder)} and {@link #set(Object)} delegate to. The public interface
+     * This is a helper method which {@link #set(BuilderInterface)} and {@link #set(Object)} delegate to. The public interface
      * does not allow generic {@link Supplier} objects to be used to set the value.
      *
      * @return This {@code ValueBuilder} itself, for chaining convenience.
@@ -134,8 +134,8 @@ public abstract class ValueBuilder<T> implements Builder<T> {
 
     /**
      * Build the value (if needed) and return it. If a value was given (as with {@link #set(Object)}), then it is simply
-     * returned. If a builder for a value was given (as with {@link #set(Builder)}), then this method delegates to
-     * that's builder's {@link Builder#get()} method.
+     * returned. If a builder for a value was given (as with {@link #set(BuilderInterface)}), then this method delegates to
+     * that's builder's {@link BuilderInterface#get()} method.
      *
      * @return The built value.
      * @throws IncompleteBuilderException if a value has not yet been set for the builder.
@@ -188,11 +188,11 @@ public abstract class ValueBuilder<T> implements Builder<T> {
         }
 
         /**
-         * Create a new instance and {@linkplain #set(Builder) set} the value using the given {@code builder}.
+         * Create a new instance and {@linkplain #set(BuilderInterface) set} the value using the given {@code builder}.
          * The builder is not invoked to build the value immediately, it will be invoked when <em>this</em> builder's
          * {@link #get()} method is invoked.
          */
-        protected DefaultValueBuilder(Builder<T> builder) {
+        protected DefaultValueBuilder(BuilderInterface<T> builder) {
             set(builder);
         }
 
@@ -331,12 +331,12 @@ public abstract class ValueBuilder<T> implements Builder<T> {
     }
 
     /**
-     * A function that maps any builder of a value to a {@link ValueBuilder} {@linkplain #create(Builder) of that builder}.
+     * A function that maps any builder of a value to a {@link ValueBuilder} {@linkplain #create(BuilderInterface) of that builder}.
      */
-    protected static class ValueBuilderOfBuilderFunction<T> implements Function<Builder<T>, ValueBuilder<T>> {
+    protected static class ValueBuilderOfBuilderFunction<T> implements Function<BuilderInterface<T>, ValueBuilder<T>> {
         @Nullable
         @Override
-        public ValueBuilder<T> apply(@Nullable Builder<T> input) {
+        public ValueBuilder<T> apply(@Nullable BuilderInterface<T> input) {
             return create(input);
         }
     }

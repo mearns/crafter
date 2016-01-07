@@ -143,7 +143,7 @@ public class ListBuilderTest {
     public void testAddAll_Builder_T_array() throws Exception {
         final String[] expected = new String[]{"burley", "hurley", "Fran"};
         @SuppressWarnings("unchecked")
-        final Builder<String>[] builders = new Builder[] {
+        final BuilderInterface<String>[] builders = new BuilderInterface[] {
                 ValueBuilder.create(expected[0]),
                 ValueBuilder.create(expected[1]),
                 ValueBuilder.create(expected[2])
@@ -168,7 +168,7 @@ public class ListBuilderTest {
     @Test
     public void testAddAll_Iterable_Builder_T() throws Exception {
         final String[] expected = new String[] {"giraffe", "goat", "pizza", "hang glider"};
-        final List<? extends Builder<String>> builders = Lists.transform(Arrays.asList(expected), ValueBuilder.<String>ofInstanceFunction());
+        final List<? extends BuilderInterface<String>> builders = Lists.transform(Arrays.asList(expected), ValueBuilder.<String>ofInstanceFunction());
         ListBuilder < String > uut = ListBuilder.create();
         ListBuilder<String> res = uut.addBuilders(builders);
 
@@ -189,7 +189,7 @@ public class ListBuilderTest {
     @Test
     public void testAddAll_Iterator_Builder_T() throws Exception {
         final String[] expected = new String[]{"carrots", "cars", "cauliflower"};
-        final List<? extends Builder<String>> builders = Lists.transform(Arrays.asList(expected), ValueBuilder.<String>ofInstanceFunction());
+        final List<? extends BuilderInterface<String>> builders = Lists.transform(Arrays.asList(expected), ValueBuilder.<String>ofInstanceFunction());
         ListBuilder<String> uut = ListBuilder.create();
         ListBuilder<String> res = uut.addBuilders(builders.iterator());
 
@@ -343,7 +343,7 @@ public class ListBuilderTest {
     public void testNeverListBuilder_addBuilders_array() {
         ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(6).add(8);
         @SuppressWarnings("unchecked")
-        Builder<Integer>[] builders = Lists.transform(ImmutableList.of(7, 5, 3, 0), ValueBuilder.<Integer>ofInstanceFunction()).toArray(new Builder[4]);
+        BuilderInterface<Integer>[] builders = Lists.transform(ImmutableList.of(7, 5, 3, 0), ValueBuilder.<Integer>ofInstanceFunction()).toArray(new BuilderInterface[4]);
         uut.maybe(false).addBuilders(builders);
         uut.add(9);
 

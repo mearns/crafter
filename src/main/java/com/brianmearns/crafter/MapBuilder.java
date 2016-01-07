@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 /**
- * A {@link Builder} of {@linkplain Map map} objects.
+ * A {@link BuilderInterface} of {@linkplain Map map} objects.
  *
  * <p>
  * Map elements are {@linkplain #put(Object, Object) put} into the builder as a key and its value. Putting the same
@@ -20,7 +20,7 @@ import java.util.*;
  * @author Brian Mearns <bmearns@ieee.org>
  */
 @SuppressWarnings("unused")
-public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
+public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
 
     /**
      * Create a new builder instance which will build {@link Map Map<K,V>} instances.
@@ -54,8 +54,6 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
      * @return The newly constructed {@link MapBuilder}.
      */
     @NotNull
-    @Contract("_, _ -> !null")
-    @SuppressWarnings("unused")
     public static <K,V> MapBuilder<K,V> create(@NotNull Class<K> keyCls, @NotNull Class<V> valueCls) {
         return new DefaultMapBuilder<>();
     }
@@ -82,10 +80,10 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
     }
 
     /**
-     * Put a value in the builder's map, represented by a Builder of that value.
+     * Put a value in the builder's map, represented by a BuilderInterface of that value.
      *
      * <p>
-     * Note that the given Builder is not {@linkplain Builder#get() invoked} to build the value
+     * Note that the given builder is not {@linkplain BuilderInterface#get() invoked} to build the value
      * right away, it is invoked once for each call to {@link #get()}.
      *
      * @param key The key at which to put the {@code value}.
@@ -93,7 +91,7 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
      *
      * @return This builder instance itself, for chaining convenience.
      */
-    public MapBuilder<K,V> put(@Nullable K key, @NotNull Builder<? extends V> value) {
+    public MapBuilder<K,V> put(@Nullable K key, @NotNull BuilderInterface<? extends V> value) {
         putSupplier(key, value);
         return this;
     }
@@ -125,7 +123,7 @@ public abstract class MapBuilder<K, V> implements Builder<Map<K,V>> {
      *
      * @return This builder instance itself, for chaining convenience.
      */
-    public MapBuilder<K,V> maybePut(@Nullable K key, @NotNull Builder<? extends V> value, boolean put) {
+    public MapBuilder<K,V> maybePut(@Nullable K key, @NotNull BuilderInterface<? extends V> value, boolean put) {
         if(put) {
             putSupplier(key, value);
         }

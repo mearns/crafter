@@ -32,10 +32,10 @@ public class ValueBuilderTest {
 
     @Test
     public void testOfBuilderFunction() {
-        Function<Builder<String>, ValueBuilder<String>> uut = ValueBuilder.ofBuilderFunction();
+        Function<BuilderInterface<String>, ValueBuilder<String>> uut = ValueBuilder.ofBuilderFunction();
         assertNotNull(uut);
 
-        Builder<String> builder = new Builder<String>() {
+        BuilderInterface<String> builder = new BuilderInterface<String>() {
             @Override
             public String get() {
                 return "Mwa ha ha!";

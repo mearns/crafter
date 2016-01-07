@@ -1,6 +1,6 @@
 package com.brianmearns.crafter.util;
 
-import com.brianmearns.crafter.Builder;
+import com.brianmearns.crafter.BuilderInterface;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -54,14 +54,14 @@ public abstract class SupplierFunctions {
     }
 
     /**
-     * Function required for type conversion from {@link Builder} to {@link Supplier}, which simply returns any
-     * {@link Builder} given to it.
+     * Function required for type conversion from {@link BuilderInterface} to {@link Supplier}, which simply returns any
+     * {@link BuilderInterface} given to it.
      */
-    public static class BuilderToSupplierFunction<T> implements Function<Builder<T>, Supplier<T>> {
+    public static class BuilderToSupplierFunction<T> implements Function<BuilderInterface<T>, Supplier<T>> {
         @Override
         @Nullable
         @Contract(value="null -> null; !null -> !null", pure=true)
-        public Supplier<T> apply(@Nullable Builder<T> input) {
+        public Supplier<T> apply(@Nullable BuilderInterface<T> input) {
             return input;
         }
     }
