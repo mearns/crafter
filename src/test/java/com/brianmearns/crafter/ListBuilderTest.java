@@ -2,6 +2,7 @@ package com.brianmearns.crafter;
 
 import com.brianmearns.crafter.util.InvokeCountingFunction;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -286,6 +287,86 @@ public class ListBuilderTest {
 
         assertArrayEquals("Expected NeverListBuilder to return the always builder's list from get().",
                 new Integer[]{7, 0}, uut.get().toArray());
+    }
+
+    @Test
+    public void testNeverListBuilder_addAll_Iterable() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(6).add(8);
+        uut.maybe(false).addAll(ImmutableList.of(7, 5, 3, 0));
+        uut.add(9);
+
+        assertArrayEquals("Expected the never builder's addAll method to not add any of the elements with an iterable.",
+                new Integer[]{6, 8, 9}, uut.get().toArray());
+    }
+
+    @Test
+    public void testNeverListBuilder_addAll_Iterator() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(6).add(8);
+        uut.maybe(false).addAll(ImmutableList.of(7, 5, 3, 0).iterator());
+        uut.add(9);
+
+        assertArrayEquals("Expected the never builder's addAll method to not add any of the elements with an iterator.",
+                new Integer[]{6, 8, 9}, uut.get().toArray());
+    }
+
+    @Test
+    public void testNeverListBuilder_addAll_array() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(6).add(8);
+        uut.maybe(false).addAll(new Integer[] {7, 5, 3, 0, 9});
+        uut.add(9);
+
+        assertArrayEquals("Expected the never builder's addAll method to not add any of the elements with an array.",
+                new Integer[]{6, 8, 9}, uut.get().toArray());
+    }
+
+    @Test
+    public void testNeverListBuilder_addBuilders_Iterable() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(6).add(8);
+        uut.maybe(false).addBuilders(Lists.transform(ImmutableList.of(7, 5, 3, 0), ValueBuilder.<Integer>ofInstanceFunction()));
+        uut.add(9);
+
+        assertArrayEquals("Expected the never builder's addBuilders method to not add any of the elements with an iterable of builders.",
+                new Integer[]{6, 8, 9}, uut.get().toArray());
+    }
+
+    @Test
+    public void testNeverListBuilder_addBuilders_Iterator() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(6).add(8);
+        uut.maybe(false).addBuilders(Lists.transform(ImmutableList.of(7, 5, 3, 0), ValueBuilder.<Integer>ofInstanceFunction()).iterator());
+        uut.add(9);
+
+        assertArrayEquals("Expected the never builder's addBuilders method to not add any of the elements with an iterator of Builders.",
+                new Integer[]{6, 8, 9}, uut.get().toArray());
+    }
+
+    @Test
+    public void testNeverListBuilder_addBuilders_array() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(6).add(8);
+        @SuppressWarnings("unchecked")
+        Builder<Integer>[] builders = Lists.transform(ImmutableList.of(7, 5, 3, 0), ValueBuilder.<Integer>ofInstanceFunction()).toArray(new Builder[4]);
+        uut.maybe(false).addBuilders(builders);
+        uut.add(9);
+
+        assertArrayEquals("Expected the never builder's addBuilders method to not add any of the elements with an array of Builders.",
+                new Integer[]{6, 8, 9}, uut.get().toArray());
+    }
+
+    @Test
+    public void testNeverListBuilder_maybeAdd_true() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(5).add(7);
+        uut.maybe(false).maybeAdd(9, true);
+
+        assertArrayEquals("Expected the never builder's maybeAdd method to not add the elements regardless of the boolean passed in.",
+                new Integer[]{5, 7}, uut.get().toArray());
+    }
+
+    @Test
+    public void testNeverListBuilder_maybeAdd_false() {
+        ListBuilder<Integer> uut = ListBuilder.create(Integer.class).add(5).add(7);
+        uut.maybe(false).maybeAdd(9, false);
+
+        assertArrayEquals("Expected the never builder's maybeAdd method to not add the elements regardless of the boolean passed in.",
+                new Integer[]{5, 7}, uut.get().toArray());
     }
 
 }
