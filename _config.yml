@@ -1,0 +1,2 @@
+# Jekyl config file
+include: [jacoco-report/.resources]
