@@ -1,8 +1,12 @@
 #!/bin/bash
+##
+## This script is called by travis CS after a successful build (as specified in the the "after_success" section
+## of the main .travis.yml config file). It is used to publish stuff to the github pages branch for this project.
+##
 
 ### Config
 
-# Our access token won't work for forks anyway, but we may as well bail out early.
+# Our access token won't work for forks anyway, but we may as well bail out early if it's submitting from the wrong repo.
 YOUR_REPO="mearns/crafter"
 
 #The user name and email that will show up one the commit to your gh-pages branch.
@@ -23,6 +27,7 @@ if [ "$TRAVIS_REPO_SLUG" == "$YOUR_REPO" ] && [ "$TRAVIS_JDK_VERSION" == "oracle
   echo -e "...Copying files...\n"
   cp -R build/docs/javadoc $HOME/javadoc-latest
   cp -R build/reports/tests $HOME/test-report-latest
+  cp -R build/reports/jacoco/test/html $HOME/jacoco-report-latest
   cp -R build/reports/findbugs $HOME/findbugs-report-latest
 
   echo -e "...Configuring git client as \"$YOUR_NAME\" <$YOUR_EMAIL>...\n"
@@ -37,11 +42,13 @@ if [ "$TRAVIS_REPO_SLUG" == "$YOUR_REPO" ] && [ "$TRAVIS_JDK_VERSION" == "oracle
   cd gh-pages
   git rm -rf ./javadoc
   git rm -rf ./test-report
+  git rm -rf ./jacoco-report
   git rm -rf ./findbugs-report
 
   echo -e "...Adding latest files...\n"
   cp -Rf $HOME/javadoc-latest ./javadoc
   cp -Rf $HOME/test-report-latest ./test-report
+  cp -Rf $HOME/jacoco-report-latest ./jacoco-report
   cp -Rf $HOME/findbugs-report-latest ./findbugs-report
   git add -f .
   git commit -m "Lastest files from successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
