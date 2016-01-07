@@ -21,6 +21,7 @@ jacocoTestReport {
         html.enabled true
     }
 }
+jacocoTestReport.dependsOn test
 
 tasks.withType(FindBugs) {
     reports {

@@ -192,6 +192,42 @@ public class MapBuilderTest {
                 .put(4, "four").put(5, "not six").build(), uut.get());
     }
 
-    //XXX: Left off here, have a few more "maybe_false" tests to do: maybe(true), maybe(false), endMaybe(), and always().
+    @Test
+    public void testMaybe_false_maybe_false() {
+        MapBuilder<Integer, String> orig = MapBuilder.create(Integer.class, String.class).put(4, "four").put(5, "not six");
+        MapBuilder<Integer, String> uut = orig.maybe(false).maybe(false);
+        uut.put(7, "sept");
+
+        assertEquals("Expected map to be unaltered by nested never builder's put() method.", ImmutableMap.<Integer, String>builder()
+                .put(4, "four").put(5, "not six").build(), orig.get());
+    }
+
+    @Test
+    public void testMaybe_false_maybe_true() {
+        MapBuilder<Integer, String> orig = MapBuilder.create(Integer.class, String.class).put(4, "four").put(5, "not six");
+        MapBuilder<Integer, String> uut = orig.maybe(false).maybe(true);
+        uut.put(7, "sept");
+
+        assertEquals("Expected maybe(true) on a never builder to return another never builder.", ImmutableMap.<Integer, String>builder()
+                .put(4, "four").put(5, "not six").build(), orig.get());
+    }
+
+    @Test
+    public void testMaybe_false_endMaybe() {
+        MapBuilder<Integer, String> orig = MapBuilder.create(Integer.class, String.class).put(4, "four").put(5, "not six");
+        MapBuilder<Integer, String> uut = orig.maybe(false);
+        MapBuilder<Integer, String> res = uut.endMaybe();
+
+        assertSame("Expected endMaybe() to return the parent builder from a never builder.", orig, res);
+    }
+
+    @Test
+    public void testMaybe_false_always() {
+        MapBuilder<Integer, String> orig = MapBuilder.create(Integer.class, String.class).put(4, "four").put(5, "not six");
+        MapBuilder<Integer, String> uut = orig.maybe(false).maybe(true).maybe(false);
+        MapBuilder<Integer, String> res = uut.always();
+
+        assertSame("Expected always() to return the always builder from a nested never builder.", orig, res);
+    }
 
 }
