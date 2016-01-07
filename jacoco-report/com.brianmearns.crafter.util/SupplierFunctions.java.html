@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Brian Mearns &lt;bmearns@ieee.org&gt;
  */
 @SuppressWarnings(&quot;unused&quot;)
-<span class="nc" id="L15">public abstract class SupplierFunctions {</span>
+<span class="fc" id="L15">public abstract class SupplierFunctions {</span>
 
 
     /**
@@ -57,7 +57,7 @@ import org.jetbrains.annotations.Nullable;
      * Function required for type conversion from {@link Builder} to {@link Supplier}, which simply returns any
      * {@link Builder} given to it.
      */
-<span class="pc" id="L60">    public static class BuilderToSupplierFunction&lt;T&gt; implements Function&lt;Builder&lt;T&gt;, Supplier&lt;T&gt;&gt; {</span>
+<span class="fc" id="L60">    public static class BuilderToSupplierFunction&lt;T&gt; implements Function&lt;Builder&lt;T&gt;, Supplier&lt;T&gt;&gt; {</span>
         @Override
         @Nullable
         @Contract(value=&quot;null -&gt; null; !null -&gt; !null&quot;, pure=true)
