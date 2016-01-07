@@ -20,4 +20,13 @@ public class SupplierFunctionsTest {
         //We already tested the function in BuilderToSupplierFunctionTest, we just need to make sure they're actually returned by this factory function.
         assertNotNull("Method should return a Function, not null.", SupplierFunctions.builderToSupplierFunction());
     }
+
+    @Test
+    public void testSupplierFunctions() {
+        //This is stupid, but I so desperately want to get 100% code coverage. =(
+        SupplierFunctions uut = new SupplierFunctions() {
+
+        };
+        assertNotNull(uut);
+    }
 }
