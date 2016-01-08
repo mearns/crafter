@@ -3,8 +3,9 @@ package com.brianmearns.crafter.demo;
 import com.brianmearns.crafter.*;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public class Thing {
 
-    @NotNull
+    @Nonnull
     public static Builder builder() {
         return new Builder();
     }
@@ -23,14 +24,14 @@ public class Thing {
 
     private final Integer i;
 
-    @NotNull
+    @Nonnull
     private final String[] array;
 
-    @NotNull
+    @Nonnull
     private final Map<String, Double> map;
 
 
-    private Thing(String str, Integer i, @NotNull String[] array, @NotNull Map<String, Double> map) {
+    private Thing(@Nullable String str, @Nullable Integer i, @Nonnull String[] array, @Nonnull Map<String, Double> map) {
         this.str = str;
         this.i = i;
         this.array = Arrays.copyOf(array, array.length);
@@ -45,38 +46,38 @@ public class Thing {
         return i;
     }
 
-    @NotNull
+    @Nonnull
     public String[] getArray() {
         return Arrays.copyOf(array, array.length);
     }
 
-    @NotNull
+    @Nonnull
     public Map<String, Double> getMap() {
         return ImmutableMap.copyOf(map);
     }
 
     public static class Builder implements BuilderInterface<Thing> {
 
-        @NotNull
+        @Nonnull
         public final ValueBuilder<String> str = ValueBuilder.create();
 
-        @NotNull
+        @Nonnull
         public final ValueBuilder<Integer> i = ValueBuilder.create();
 
-        @NotNull
+        @Nonnull
         public final ListBuilder<String> array = ListBuilder.create();
 
-        @NotNull
+        @Nonnull
         public final MapBuilder<String, Double> map = MapBuilder.create();
 
-        @NotNull
+        @Nonnull
         @Override
         public Thing get() throws IncompleteBuilderException {
             List<String> arrayList = array.get();
             return new Thing(str.get(), i.get(), arrayList.toArray(new String[arrayList.size()]), map.get());
         }
 
-        @NotNull
+        @Nonnull
         public Builder apply(Function<Builder, Void> func) {
             func.apply(this);
             return this;

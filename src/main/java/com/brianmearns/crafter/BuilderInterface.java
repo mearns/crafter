@@ -1,7 +1,8 @@
 package com.brianmearns.crafter;
 
 import com.google.common.base.Supplier;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * A {@code BuilderInterface} implements the builder design pattern, in which one object is used to

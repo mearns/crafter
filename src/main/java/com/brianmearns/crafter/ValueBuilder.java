@@ -4,9 +4,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 
 /**
@@ -24,8 +24,8 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
      * @param value The value to which the returned builder is initialized.
      * @param <T> The type which is built by the returned builder.
      */
-    @NotNull
-    public static <T> ValueBuilder<T> create(T value) {
+    @Nonnull
+    public static <T> ValueBuilder<T> create(@Nullable T value) {
         return new DefaultValueBuilder<>(value);
     }
 
@@ -33,7 +33,7 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
      * Instantiate a new {@link ValueBuilder} initialized with the given <code>value</code>. I.e., when
      * the {@link #get()} method is invoked, it will delegate to the given object.
      */
-    @NotNull
+    @Nonnull
     public static <T> ValueBuilder<T> create(BuilderInterface<T> value) {
         return new DefaultValueBuilder<>(value);
     }
@@ -41,7 +41,7 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
     /**
      * Create a new instance that does not yet have the value set.
      */
-    @NotNull
+    @Nonnull
     public static <T> ValueBuilder<T> create() {
         return new DefaultValueBuilder<>();
     }
@@ -49,7 +49,7 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
     /**
      * Create a new instance that does not yet have the value set.
      */
-    @NotNull
+    @Nonnull
     public static <T> ValueBuilder<T> create(Class<T> cls) {
         return new DefaultValueBuilder<>();
     }
@@ -58,7 +58,7 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
      * Returns a function which maps Builders of objects to ValueBuilders, using the {@link #create(BuilderInterface)}
      * method.
      */
-    @NotNull
+    @Nonnull
     public static <T> Function<BuilderInterface<T>, ValueBuilder<T>> ofBuilderFunction() {
         return new ValueBuilderOfBuilderFunction<>();
     }
@@ -67,8 +67,7 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
      * Returns a function which maps values to ValueBuilders of that value, using the {@link #create(Object)}
      * method.
      */
-    @NotNull
-    @Contract(" -> !null")
+    @Nonnull
     public static <T> Function<T, ValueBuilder<T>> ofInstanceFunction() {
         return new ValueBuilderOfInstanceFunction<>();
     }
@@ -78,8 +77,7 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
      *
      * @return This {@code ValueBuilder} itself, for chaining convenience.
      */
-    @NotNull
-    @Contract("_ -> !null")
+    @Nonnull
     public ValueBuilder<T> set(@Nullable T value) {
         return set(Suppliers.ofInstance(value));
     }
@@ -90,8 +88,8 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
      *
      * @return This {@code ValueBuilder} itself, for chaining convenience.
      */
-    @NotNull
-    public ValueBuilder<T> set(@NotNull BuilderInterface<T> valueBuilder) {
+    @Nonnull
+    public ValueBuilder<T> set(@Nonnull BuilderInterface<T> valueBuilder) {
         return set((Supplier<T>)valueBuilder);
     }
 
@@ -103,8 +101,8 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
      *
      * @return This {@code ValueBuilder} itself, for chaining convenience.
      */
-    @NotNull
-    protected abstract ValueBuilder<T> set(@NotNull Supplier<T> value);
+    @Nonnull
+    protected abstract ValueBuilder<T> set(@Nonnull Supplier<T> value);
 
     /**
      * Apply the given function to {@code this} object, and return {@code this} object again.
@@ -120,13 +118,13 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
      *
      * @return This {@code ValueBuilder} itself, for chaining convenience.
      */
-    @NotNull
-    protected abstract ValueBuilder<T> apply(@NotNull Function<ValueBuilder<T>, Void> function);
+    @Nonnull
+    protected abstract ValueBuilder<T> apply(@Nonnull Function<ValueBuilder<T>, Void> function);
 
-    @NotNull
-    protected abstract ValueBuilder<T> maybeSet(@NotNull Supplier<T> value, boolean doSet);
+    @Nonnull
+    protected abstract ValueBuilder<T> maybeSet(@Nonnull Supplier<T> value, boolean doSet);
 
-    @NotNull
+    @Nonnull
     public ValueBuilder<T> maybeSet(@Nullable T value, boolean doSet) {
         this.maybeSet(Suppliers.ofInstance(value), doSet);
         return this;
@@ -147,8 +145,7 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
     /**
      * Returns the top-level non-conditional builder.
      */
-    @NotNull
-    @Contract("-> !null")
+    @Nonnull
     public abstract ValueBuilder<T> always();
 
     /**
@@ -156,14 +153,14 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
      * @param yes If {@code true}, then methods invoked on the returned builder will modify the state of {@code this}
      *            builder. Otherwise, methods invoked on the returned builder will not modify state.
      */
-    @NotNull
+    @Nonnull
     public abstract ValueBuilder<T> maybe(boolean yes);
 
     /**
      * Returns the parent builder of a conditional builder. This is not necessarily the originating top level
      * builder if you have nested (or rather chained) calls to {@link #maybe(boolean)}.
      */
-    @NotNull
+    @Nonnull
     public abstract ValueBuilder<T> endMaybe();
 
 
@@ -173,7 +170,7 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
          * A supplier for the value. Suppliers are used to encapsulate the fact that you can
          * set the value using either a value directly, or a builder for the value.
          */
-        @NotNull
+        @Nonnull
         private Optional<Supplier<T>> value = Optional.absent();
 
         /**
@@ -196,16 +193,16 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
             set(builder);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected ValueBuilder<T> set(@NotNull Supplier<T> value) {
+        protected ValueBuilder<T> set(@Nonnull Supplier<T> value) {
             this.value = Optional.of(value);
             return this;
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected ValueBuilder<T> maybeSet(@NotNull Supplier<T> value, boolean doSet) {
+        protected ValueBuilder<T> maybeSet(@Nonnull Supplier<T> value, boolean doSet) {
             if(doSet) {
                 set(value);
             }
@@ -222,8 +219,8 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
         }
 
         @Override
-        @NotNull
-        protected ValueBuilder<T> apply(@NotNull Function<ValueBuilder<T>, Void> function) {
+        @Nonnull
+        protected ValueBuilder<T> apply(@Nonnull Function<ValueBuilder<T>, Void> function) {
             function.apply(this);
             return this;
         }
@@ -233,8 +230,7 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
          * Returns itself.
          */
         @Override
-        @NotNull
-        @Contract(pure=true)
+        @Nonnull
         public ValueBuilder<T> always() {
             return this;
         }
@@ -243,7 +239,7 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
          * Returns either {@code this} object itself, or a new {@link NeverValueBuilder} if {@code yes} is {@code false}.
          */
         @Override
-        @NotNull
+        @Nonnull
         public ValueBuilder<T> maybe(boolean yes) {
             if(yes) {
                 return this;
@@ -252,9 +248,8 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
             }
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        @Contract(pure=true)
         public ValueBuilder<T> endMaybe() {
             return this;
         }
@@ -265,32 +260,32 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
      */
     protected static class NeverValueBuilder<T> extends ValueBuilder<T> {
 
-        @NotNull
+        @Nonnull
         private final ValueBuilder<T> alwaysBuilder;
 
-        @NotNull
+        @Nonnull
         private final ValueBuilder<T> parent;
 
-        protected NeverValueBuilder(@NotNull ValueBuilder<T> alwaysBuilder, @NotNull ValueBuilder<T> parent) {
+        protected NeverValueBuilder(@Nonnull ValueBuilder<T> alwaysBuilder, @Nonnull ValueBuilder<T> parent) {
             this.alwaysBuilder = alwaysBuilder;
             this.parent = parent;
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected ValueBuilder<T> set(@NotNull Supplier<T> value) {
+        protected ValueBuilder<T> set(@Nonnull Supplier<T> value) {
             return this;
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected ValueBuilder<T> apply(@NotNull Function<ValueBuilder<T>, Void> function) {
+        protected ValueBuilder<T> apply(@Nonnull Function<ValueBuilder<T>, Void> function) {
             return this;
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        protected ValueBuilder<T> maybeSet(@NotNull Supplier<T> value, boolean doSet) {
+        protected ValueBuilder<T> maybeSet(@Nonnull Supplier<T> value, boolean doSet) {
             return this;
         }
 
@@ -300,19 +295,19 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
             return alwaysBuilder.get();
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public ValueBuilder<T> always() {
             return alwaysBuilder;
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public ValueBuilder<T> maybe(boolean yes) {
             return new NeverValueBuilder<>(alwaysBuilder, this);
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public ValueBuilder<T> endMaybe() {
             return parent;
@@ -336,7 +331,10 @@ public abstract class ValueBuilder<T> implements BuilderInterface<T> {
     protected static class ValueBuilderOfBuilderFunction<T> implements Function<BuilderInterface<T>, ValueBuilder<T>> {
         @Nullable
         @Override
-        public ValueBuilder<T> apply(@Nullable BuilderInterface<T> input) {
+        public ValueBuilder<T> apply(BuilderInterface<T> input) {
+            if(input == null) {
+                throw new NullPointerException("Builder cannot be null. To create an instance with a null value, supply a null value instead of a null builder.");
+            }
             return create(input);
         }
     }

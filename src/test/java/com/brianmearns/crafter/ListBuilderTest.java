@@ -4,10 +4,9 @@ import com.brianmearns.crafter.util.InvokeCountingFunction;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -263,7 +262,6 @@ public class ListBuilderTest {
         InvokeCountingFunction<ListBuilder<Integer>, Void> func = new InvokeCountingFunction<ListBuilder<Integer>, Void>() {
             @Nullable
             @Override
-            @Contract("_ -> null")
             public Void reallyApply(ListBuilder<Integer> input) {
                 input.add(5);
                 return null;

@@ -3,11 +3,13 @@ package com.brianmearns.crafter;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A {@link BuilderInterface} of {@linkplain Map map} objects.
@@ -30,8 +32,7 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
      *
      * @return The newly constructed {@link MapBuilder}.
      */
-    @NotNull
-    @Contract("-> !null")
+    @Nonnull
     public static <K,V> MapBuilder<K,V> create() {
         return new DefaultMapBuilder<>();
     }
@@ -53,8 +54,8 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
      *
      * @return The newly constructed {@link MapBuilder}.
      */
-    @NotNull
-    public static <K,V> MapBuilder<K,V> create(@NotNull Class<K> keyCls, @NotNull Class<V> valueCls) {
+    @Nonnull
+    public static <K,V> MapBuilder<K,V> create(@Nonnull Class<K> keyCls, @Nonnull Class<V> valueCls) {
         return new DefaultMapBuilder<>();
     }
 
@@ -64,7 +65,7 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
      * @param key The key to add (or replace) in the map.
      * @param valueSupplier A {@link Supplier} for the value to put in the map.
      */
-    protected abstract void putSupplier(@Nullable K key, @NotNull Supplier<? extends V> valueSupplier);
+    protected abstract void putSupplier(@Nullable K key, @Nonnull Supplier<? extends V> valueSupplier);
 
     /**
      * Put the given value in the builder's map.
@@ -91,7 +92,7 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
      *
      * @return This builder instance itself, for chaining convenience.
      */
-    public MapBuilder<K,V> put(@Nullable K key, @NotNull BuilderInterface<? extends V> value) {
+    public MapBuilder<K,V> put(@Nullable K key, @Nonnull BuilderInterface<? extends V> value) {
         putSupplier(key, value);
         return this;
     }
@@ -123,7 +124,7 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
      *
      * @return This builder instance itself, for chaining convenience.
      */
-    public MapBuilder<K,V> maybePut(@Nullable K key, @NotNull BuilderInterface<? extends V> value, boolean put) {
+    public MapBuilder<K,V> maybePut(@Nullable K key, @Nonnull BuilderInterface<? extends V> value, boolean put) {
         if(put) {
             putSupplier(key, value);
         }
@@ -147,21 +148,21 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
     public abstract MapBuilder<K,V> apply(Function<MapBuilder<K,V>, Void> function);
 
     @Override
-    @NotNull
+    @Nonnull
     public abstract Map<K, V> get() throws IncompleteBuilderException;
 
 
-    @NotNull
+    @Nonnull
     public abstract MapBuilder<K, V> maybe(boolean yes);
 
-    @NotNull
+    @Nonnull
     public abstract MapBuilder<K, V> endMaybe();
 
-    @NotNull
+    @Nonnull
     public abstract MapBuilder<K, V> always();
 
     protected static class DefaultMapBuilder<K, V> extends MapBuilder<K, V> {
-        @NotNull
+        @Nonnull
         private List<Entry<K,V>> entries;
 
         public DefaultMapBuilder() {
@@ -169,13 +170,12 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
         }
 
         @Override
-        @NotNull
-        @Contract("-> !null")
+        @Nonnull
         public Map<K, V> get() throws IncompleteBuilderException {
             return buildMap(entries);
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public MapBuilder<K, V> maybe(boolean yes) {
             if(yes) {
@@ -185,13 +185,13 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
         }
 
         @Override
-        @NotNull
+        @Nonnull
         public MapBuilder<K, V> endMaybe() {
             return this;
         }
 
         @Override
-        @NotNull
+        @Nonnull
         public MapBuilder<K, V> always() {
             return this;
         }
@@ -203,8 +203,8 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
          *
          * This will typically delegate to {@link #createMap(int)}.
          */
-        @NotNull
-        protected Map<K, V> buildMap(@NotNull List<Entry<K,V>> entries) {
+        @Nonnull
+        protected Map<K, V> buildMap(@Nonnull List<Entry<K,V>> entries) {
             Map<K,V> map = createMap(entries.size());
             for(Entry<K,V> entry : entries) {
                 map.put(entry.getKey(), entry.getValue());
@@ -218,13 +218,13 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
          *
          * @param size The approximate number of entries that the map will need to hold initially.
          */
-        @NotNull
+        @Nonnull
         protected Map<K, V> createMap(int size) {
             return new HashMap<>(size);
         }
 
         @Override
-        protected void putSupplier(@Nullable K key, @NotNull Supplier<? extends V> valueSupplier) {
+        protected void putSupplier(@Nullable K key, @Nonnull Supplier<? extends V> valueSupplier) {
             entries.add(new Entry<>(key, valueSupplier));
         }
 
@@ -238,10 +238,10 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
             @Nullable
             private final K key;
 
-            @NotNull
+            @Nonnull
             private final Supplier<? extends V> value;
 
-            protected Entry(@Nullable K key, @NotNull Supplier<? extends V> value) {
+            protected Entry(@Nullable K key, @Nonnull Supplier<? extends V> value) {
                 this.key = key;
                 this.value = value;
             }
@@ -260,19 +260,19 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
 
     protected static class NeverMapBuilder<K, V> extends MapBuilder<K, V> {
 
-        @NotNull
+        @Nonnull
         private final MapBuilder<K, V> alwaysBuilder;
 
-        @NotNull
+        @Nonnull
         private final MapBuilder<K, V> parent;
 
-        protected NeverMapBuilder(@NotNull MapBuilder<K, V> alwaysBuilder, @NotNull MapBuilder<K, V> parent) {
+        protected NeverMapBuilder(@Nonnull MapBuilder<K, V> alwaysBuilder, @Nonnull MapBuilder<K, V> parent) {
             this.alwaysBuilder = alwaysBuilder;
             this.parent = parent;
         }
 
         @Override
-        protected void putSupplier(@Nullable K key, @NotNull Supplier<? extends V> valueSupplier) {
+        protected void putSupplier(@Nullable K key, @Nonnull Supplier<? extends V> valueSupplier) {
             //Do nothing;
         }
 
@@ -281,25 +281,25 @@ public abstract class MapBuilder<K, V> implements BuilderInterface<Map<K,V>> {
             return this;
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public Map<K, V> get() throws IncompleteBuilderException {
             return alwaysBuilder.get();
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public MapBuilder<K, V> maybe(boolean yes) {
             return new NeverMapBuilder<>(alwaysBuilder, this);
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public MapBuilder<K, V> endMaybe() {
             return parent;
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public MapBuilder<K, V> always() {
             return alwaysBuilder;

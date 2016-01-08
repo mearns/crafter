@@ -30,7 +30,6 @@ public class IncompleteBuilderExceptionTest {
 
     @Test
     public void test_constructor_throwable() {
-        final String message = "this is my ";
         final Throwable cause = new Throwable();
         final IncompleteBuilderException uut = new IncompleteBuilderException(cause);
 

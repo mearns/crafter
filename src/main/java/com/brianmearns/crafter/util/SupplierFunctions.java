@@ -4,9 +4,11 @@ import com.brianmearns.crafter.BuilderInterface;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+
 
 /**
  * @author Brian Mearns <bmearns@ieee.org>
@@ -24,14 +26,12 @@ public abstract class SupplierFunctions {
      * @return A new {@link SupplierOfInstanceFunction} which transforms an instance into a {@link Supplier}
      * of that instance.
      */
-    @NotNull
-    @Contract(" -> !null")
+    @Nonnull
     public static <T> SupplierOfInstanceFunction<T> supplierOfInstanceFunction() {
         return new SupplierOfInstanceFunction<>();
     }
 
-    @NotNull
-    @Contract(" -> !null")
+    @Nonnull
     public static <T> BuilderToSupplierFunction<T> builderToSupplierFunction() {
         return new BuilderToSupplierFunction<>();
     }
@@ -45,9 +45,8 @@ public abstract class SupplierFunctions {
      *           method.
      */
     public static class SupplierOfInstanceFunction<T> implements Function<T, Supplier<T>> {
-        @NotNull
+        @Nonnull
         @Override
-        @Contract("_ -> !null")
         public Supplier<T> apply(@Nullable T input) {
             return Suppliers.ofInstance(input);
         }
@@ -60,7 +59,6 @@ public abstract class SupplierFunctions {
     public static class BuilderToSupplierFunction<T> implements Function<BuilderInterface<T>, Supplier<T>> {
         @Override
         @Nullable
-        @Contract(value="null -> null; !null -> !null", pure=true)
         public Supplier<T> apply(@Nullable BuilderInterface<T> input) {
             return input;
         }

@@ -2,8 +2,9 @@ package com.brianmearns.crafter;
 
 import com.brianmearns.crafter.util.InvokeCountingFunction;
 import com.google.common.base.Function;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
+
+import javax.annotation.Nullable;
 
 import static org.junit.Assert.*;
 
@@ -226,6 +227,11 @@ public class ValueBuilderTest {
     @Test(expected = IncompleteBuilderException.class)
     public void test_create_Class() {
         ValueBuilder.create(Integer.class).get();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test_valueBuilderOfBuilderFunction_null() {
+        new ValueBuilder.ValueBuilderOfBuilderFunction<String>().apply(null);
     }
 
 }

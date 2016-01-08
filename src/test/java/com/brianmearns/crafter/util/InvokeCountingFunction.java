@@ -1,19 +1,21 @@
 package com.brianmearns.crafter.util;
 
 import com.google.common.base.Function;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  *
  */
 public abstract class InvokeCountingFunction<F, T> implements Function<F, T> {
 
-    @NotNull
+    @Nonnull
     public static <F, T> InvokeCountingFunction<F, T> doNothing() {
         return new DoNothingCountingFunction<>();
     }
 
-    @NotNull
+    @Nonnull
     public static <F> InvokeCountingFunction<F, Void> reallyDoNothing() {
         return new DoNothingCountingFunction<>();
     }
@@ -39,6 +41,7 @@ public abstract class InvokeCountingFunction<F, T> implements Function<F, T> {
         }
 
         @Override
+        @Nullable
         protected T reallyApply(F input) {
             return null;
         }

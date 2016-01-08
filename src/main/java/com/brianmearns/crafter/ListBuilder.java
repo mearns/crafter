@@ -8,10 +8,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -25,8 +24,7 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
     /**
      * Static factory method to create an instance.
      */
-    @NotNull
-    @Contract("-> !null")
+    @Nonnull
     public static <T> ListBuilder<T> create() {
         return new DefaultListBuilder<>();
     }
@@ -35,8 +33,7 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      * Static factory method to create an instance.
      * @param cls Specifies the type {@code T} of the builder returned.
      */
-    @NotNull
-    @Contract("_ -> !null")
+    @Nonnull
     public static <T> ListBuilder<T> create(Class<T> cls) {
         return new DefaultListBuilder<>();
     }
@@ -47,9 +44,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract("_ -> !null")
-    protected abstract ListBuilder<T> add(@NotNull Supplier<? extends T> element);
+    @Nonnull
+    protected abstract ListBuilder<T> add(@Nonnull Supplier<? extends T> element);
 
     /**
      * Helper method for adding an iterable of suppliers of elements.
@@ -58,9 +54,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract("_ -> !null")
-    protected abstract ListBuilder<T> addSuppliers(@NotNull Iterable<? extends Supplier<? extends T>> elements);
+    @Nonnull
+    protected abstract ListBuilder<T> addSuppliers(@Nonnull Iterable<? extends Supplier<? extends T>> elements);
 
     /**
      * Helper method for adding an iterator of suppliers of elements.
@@ -69,9 +64,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract("_ -> !null")
-    protected abstract ListBuilder<T> addSuppliers(@NotNull Iterator<? extends Supplier<? extends T>> elements);
+    @Nonnull
+    protected abstract ListBuilder<T> addSuppliers(@Nonnull Iterator<? extends Supplier<? extends T>> elements);
 
     /**
      * Helper method for adding an array of suppliers of elements.
@@ -80,8 +74,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    protected abstract ListBuilder<T> addSuppliers(@NotNull Supplier<? extends T>[] elements);
+    @Nonnull
+    protected abstract ListBuilder<T> addSuppliers(@Nonnull Supplier<? extends T>[] elements);
 
     /**
      * Helper method to add the given element, if and only if the given boolean is {@code true}. Otherwise
@@ -92,8 +86,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    protected abstract ListBuilder<T> maybeAdd(@NotNull Supplier<? extends T> element, boolean add);
+    @Nonnull
+    protected abstract ListBuilder<T> maybeAdd(@Nonnull Supplier<? extends T> element, boolean add);
 
     /**
      * Add all of the given elements, in order, to the list of values.
@@ -106,8 +100,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      * @see #addAll(Object[])
      * @see #addBuilders(Iterable)
      */
-    @NotNull
-    public ListBuilder<T> addAll(@NotNull Iterable<? extends T> elements) {
+    @Nonnull
+    public ListBuilder<T> addAll(@Nonnull Iterable<? extends T> elements) {
         return addSuppliers(Iterables.transform(elements, SupplierFunctions.<T>supplierOfInstanceFunction()));
     }
 
@@ -126,9 +120,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      * @see #addBuilders(BuilderInterface[])
      * @see #addAll(Iterable)
      */
-    @NotNull
-    @Contract("_ -> !null")
-    public ListBuilder<T> addBuilders(@NotNull Iterable<? extends BuilderInterface<? extends T>> elements) {
+    @Nonnull
+    public ListBuilder<T> addBuilders(@Nonnull Iterable<? extends BuilderInterface<? extends T>> elements) {
         return addSuppliers(elements);
     }
 
@@ -143,9 +136,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      * @see #addAll(Object[])
      * @see #addBuilders(Iterator)
      */
-    @NotNull
-    @Contract("_ -> !null")
-    public ListBuilder<T> addAll(@NotNull Iterator<? extends T> elements) {
+    @Nonnull
+    public ListBuilder<T> addAll(@Nonnull Iterator<? extends T> elements) {
         return addSuppliers(Iterators.transform(elements, SupplierFunctions.<T>supplierOfInstanceFunction()));
     }
 
@@ -164,9 +156,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      * @see #addBuilders(BuilderInterface[])
      * @see #addAll(Iterator)
      */
-    @NotNull
-    @Contract("_ -> !null")
-    public ListBuilder<T> addBuilders(@NotNull Iterator<? extends BuilderInterface<? extends T>> elements) {
+    @Nonnull
+    public ListBuilder<T> addBuilders(@Nonnull Iterator<? extends BuilderInterface<? extends T>> elements) {
         return addSuppliers(elements);
     }
 
@@ -181,9 +172,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      * @see #addAll(Iterator)
      * @see #addBuilders(BuilderInterface[])
      */
-    @NotNull
-    @Contract("_ -> !null")
-    public ListBuilder<T> addAll(@NotNull T[] elements) {
+    @Nonnull
+    public ListBuilder<T> addAll(@Nonnull T[] elements) {
         return addSuppliers(Iterables.transform(Arrays.asList(elements), SupplierFunctions.<T>supplierOfInstanceFunction()));
     }
 
@@ -202,9 +192,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      * @see #addBuilders(Iterator)
      * @see #addAll(Object[])
      */
-    @NotNull
-    @Contract("_ -> !null")
-    public ListBuilder<T> addBuilders(@NotNull BuilderInterface<? extends T>[] elements) {
+    @Nonnull
+    public ListBuilder<T> addBuilders(@Nonnull BuilderInterface<? extends T>[] elements) {
         return addSuppliers(elements);
     }
 
@@ -215,8 +204,7 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract("_ -> !null")
+    @Nonnull
     public ListBuilder<T> add(@Nullable T element) {
         return add(Suppliers.ofInstance(element));
     }
@@ -230,9 +218,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract("_ -> !null")
-    public ListBuilder<T> add(@NotNull BuilderInterface<? extends T> elementBuilder) {
+    @Nonnull
+    public ListBuilder<T> add(@Nonnull BuilderInterface<? extends T> elementBuilder) {
         return add((Supplier<? extends T>) elementBuilder);
     }
 
@@ -245,8 +232,7 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract("_, _ -> !null")
+    @Nonnull
     public ListBuilder<T> maybeAdd(@Nullable T element, boolean add) {
         return maybeAdd(Suppliers.ofInstance(element), add);
     }
@@ -256,8 +242,7 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      *
      * @return The built list of elements.
      */
-    @NotNull
-    @Contract("-> !null")
+    @Nonnull
     @Override
     public abstract List<T> get() throws IncompleteBuilderException;
 
@@ -270,9 +255,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract("_, _ -> !null")
-    public ListBuilder<T> maybeAdd(@NotNull BuilderInterface<? extends T> element, boolean add) {
+    @Nonnull
+    public ListBuilder<T> maybeAdd(@Nonnull BuilderInterface<? extends T> element, boolean add) {
         return maybeAdd((Supplier<? extends T>) element, add);
     }
 
@@ -290,14 +274,13 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      *
      * @return This {@code ListBuilder} itself, for chaining convenience.
      */
-    @NotNull
-    public abstract ListBuilder<T> apply(@NotNull Function<ListBuilder<T>, Void> function);
+    @Nonnull
+    public abstract ListBuilder<T> apply(@Nonnull Function<ListBuilder<T>, Void> function);
 
     /**
      * Returns the top-level non-conditional builder.
      */
-    @NotNull
-    @Contract("-> !null")
+    @Nonnull
     public abstract ListBuilder<T> always();
 
     /**
@@ -305,20 +288,20 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      * @param yes If {@code true}, then methods invoked on the returned builder will modify the state of {@code this}
      *            builder. Otherwise, methods invoked on the returned builder will not modify state.
      */
-    @NotNull
+    @Nonnull
     public abstract ListBuilder<T> maybe(boolean yes);
 
     /**
      * Returns the parent list builder of a conditional list builder. This is not necessarily the originating top level
      * builder if you have nested (or rather chained) calls to {@link #maybe(boolean)}.
      */
-    @NotNull
+    @Nonnull
     public abstract ListBuilder<T> endMaybe();
 
     @SuppressWarnings("unused")
     protected static class DefaultListBuilder<T> extends ListBuilder<T> {
 
-        @NotNull
+        @Nonnull
         private final List<Supplier<? extends T>> elements;
 
         {
@@ -350,9 +333,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
          *
          * @return A list that will be returned by this object's {@link #get()} method.
          */
-        @NotNull
-        @Contract("_ -> !null")
-        protected List<T> get(@NotNull ImmutableList<Supplier<? extends T>> suppliers) {
+        @Nonnull
+        protected List<T> get(@Nonnull ImmutableList<Supplier<? extends T>> suppliers) {
             ArrayList<T> list = new ArrayList<>(suppliers.size());
             for (Supplier<? extends T> supplier : suppliers) {
                 list.add(supplier.get());
@@ -361,25 +343,22 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
         }
 
         @Override
-        @NotNull
-        @Contract("_ -> !null")
-        protected ListBuilder<T> add(@NotNull Supplier<? extends T> element) {
+        @Nonnull
+        protected ListBuilder<T> add(@Nonnull Supplier<? extends T> element) {
             elements.add(element);
             return this;
         }
 
         @Override
-        @NotNull
-        @Contract("_ -> !null")
-        protected ListBuilder<T> addSuppliers(@NotNull Iterable<? extends Supplier<? extends T>> elements) {
+        @Nonnull
+        protected ListBuilder<T> addSuppliers(@Nonnull Iterable<? extends Supplier<? extends T>> elements) {
             Iterables.addAll(this.elements, elements);
             return this;
         }
 
         @Override
-        @NotNull
-        @Contract("_ -> !null")
-        protected ListBuilder<T> addSuppliers(@NotNull Iterator<? extends Supplier<? extends T>> elements) {
+        @Nonnull
+        protected ListBuilder<T> addSuppliers(@Nonnull Iterator<? extends Supplier<? extends T>> elements) {
             while(elements.hasNext()) {
                 this.elements.add(elements.next());
             }
@@ -387,15 +366,14 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
         }
 
         @Override
-        @NotNull
-        protected ListBuilder<T> addSuppliers(@NotNull Supplier<? extends T>[] elements) {
+        @Nonnull
+        protected ListBuilder<T> addSuppliers(@Nonnull Supplier<? extends T>[] elements) {
             return addSuppliers(Arrays.asList(elements));
         }
 
         @Override
-        @NotNull
-        @Contract("_, _ -> !null")
-        protected ListBuilder<T> maybeAdd(@NotNull Supplier<? extends T> element, boolean add) {
+        @Nonnull
+        protected ListBuilder<T> maybeAdd(@Nonnull Supplier<? extends T> element, boolean add) {
             if(add) {
                 this.add(element);
             }
@@ -403,9 +381,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
         }
 
         @Override
-        @NotNull
-        @Contract("_ -> !null")
-        public ListBuilder<T> apply(@NotNull Function<ListBuilder<T>, Void> function) {
+        @Nonnull
+        public ListBuilder<T> apply(@Nonnull Function<ListBuilder<T>, Void> function) {
             function.apply(this);
             return this;
         }
@@ -419,7 +396,7 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
          *
          * @return The built list of elements.
          */
-        @NotNull
+        @Nonnull
         @Override
         public List<T> get() throws IncompleteBuilderException {
             return get(ImmutableList.copyOf(elements));
@@ -429,8 +406,7 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
          * Returns itself.
          */
         @Override
-        @NotNull
-        @Contract(pure=true)
+        @Nonnull
         public ListBuilder<T> always() {
             return this;
         }
@@ -439,7 +415,7 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
          * Returns either {@code this} object itself, or a new {@link NeverListBuilder} if {@code yes} is {@code false}.
          */
         @Override
-        @NotNull
+        @Nonnull
         public ListBuilder<T> maybe(boolean yes) {
             if(yes) {
                 return this;
@@ -448,9 +424,8 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
             }
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        @Contract(pure=true)
         public ListBuilder<T> endMaybe() {
             return this;
         }
@@ -462,58 +437,53 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
      */
     protected static class NeverListBuilder<T> extends ListBuilder<T> {
 
-        @NotNull
+        @Nonnull
         private final ListBuilder<T> alwaysBuilder;
 
-        @NotNull
+        @Nonnull
         private final ListBuilder<T> parent;
 
-        protected NeverListBuilder(@NotNull ListBuilder<T> alwaysBuilder, @NotNull ListBuilder<T> parent) {
+        protected NeverListBuilder(@Nonnull ListBuilder<T> alwaysBuilder, @Nonnull ListBuilder<T> parent) {
             this.alwaysBuilder = alwaysBuilder;
             this.parent = parent;
         }
 
         @Override
-        @NotNull
-        @Contract(pure=true)
-        protected ListBuilder<T> add(@NotNull Supplier<? extends T> element) {
+        @Nonnull
+        protected ListBuilder<T> add(@Nonnull Supplier<? extends T> element) {
             return this;
         }
 
         @Override
-        @NotNull
-        @Contract(pure=true)
-        protected ListBuilder<T> addSuppliers(@NotNull Iterable<? extends Supplier<? extends T>> elements) {
+        @Nonnull
+        protected ListBuilder<T> addSuppliers(@Nonnull Iterable<? extends Supplier<? extends T>> elements) {
             return this;
         }
 
         @Override
-        @NotNull
-        @Contract(pure=true)
-        protected ListBuilder<T> addSuppliers(@NotNull Iterator<? extends Supplier<? extends T>> elements) {
+        @Nonnull
+        protected ListBuilder<T> addSuppliers(@Nonnull Iterator<? extends Supplier<? extends T>> elements) {
             return this;
         }
 
         @Override
-        @NotNull
-        @Contract(pure=true)
-        protected ListBuilder<T> addSuppliers(@NotNull Supplier<? extends T>[] elements) {
+        @Nonnull
+        protected ListBuilder<T> addSuppliers(@Nonnull Supplier<? extends T>[] elements) {
             return this;
         }
 
         @Override
-        @NotNull
-        @Contract(pure=true)
-        protected ListBuilder<T> maybeAdd(@NotNull Supplier<? extends T> element, boolean add) {
+        @Nonnull
+        protected ListBuilder<T> maybeAdd(@Nonnull Supplier<? extends T> element, boolean add) {
             return this;
         }
 
         /**
          * Note that the never build <em>does not</em> invoke the given function at all, it simply returns itself, as usual.
          */
-        @NotNull
+        @Nonnull
         @Override
-        public ListBuilder<T> apply(@NotNull Function<ListBuilder<T>, Void> function) {
+        public ListBuilder<T> apply(@Nonnull Function<ListBuilder<T>, Void> function) {
             return this;
         }
 
@@ -521,8 +491,7 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
          * Returns the originating (non-conditional) list builder.
          */
         @Override
-        @NotNull
-        @Contract(pure=true)
+        @Nonnull
         public ListBuilder<T> always() {
             return alwaysBuilder;
         }
@@ -533,14 +502,12 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
          * one is, the aggregate is false.
          */
         @Override
-        @NotNull
-        @Contract(pure=true)
+        @Nonnull
         public ListBuilder<T> maybe(boolean yes) {
             return new NeverListBuilder<>(alwaysBuilder, this);
         }
 
-        @NotNull
-        @Contract(pure=true)
+        @Nonnull
         public ListBuilder<T> endMaybe() {
             return parent;
         }
@@ -549,7 +516,7 @@ public abstract class ListBuilder<T> implements BuilderInterface<List<T>> {
          * Delegates to the originating (non-conditional) list builder.
          */
         @Override
-        @NotNull
+        @Nonnull
         public List<T> get() throws IncompleteBuilderException {
             return alwaysBuilder.get();
         }
