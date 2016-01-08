@@ -17,8 +17,8 @@ dependencies {
 jacocoTestReport {
     reports {
         xml.enabled true
-        csv.enabled false
         html.enabled true
+        csv.enabled false
     }
 }
 jacocoTestReport.dependsOn test
