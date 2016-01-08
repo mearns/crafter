@@ -8,37 +8,34 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
- * A {@link Builder} for a list of values.
+ * A {@link BuilderInterface} for a list of values.
  *
  * @author Brian Mearns &lt;bmearns@ieee.org&gt;
  */
 @SuppressWarnings(&quot;unused&quot;)
-<span class="fc" id="L23">public abstract class ListBuilder&lt;T&gt; implements Builder&lt;List&lt;T&gt;&gt; {</span>
+<span class="fc" id="L22">public abstract class ListBuilder&lt;T&gt; implements BuilderInterface&lt;List&lt;T&gt;&gt; {</span>
 
     /**
      * Static factory method to create an instance.
      */
-    @NotNull
-    @Contract(&quot;-&gt; !null&quot;)
+    @Nonnull
     public static &lt;T&gt; ListBuilder&lt;T&gt; create() {
-<span class="fc" id="L31">        return new DefaultListBuilder&lt;&gt;();</span>
+<span class="fc" id="L29">        return new DefaultListBuilder&lt;&gt;();</span>
     }
 
     /**
      * Static factory method to create an instance.
      * @param cls Specifies the type {@code T} of the builder returned.
      */
-    @NotNull
-    @Contract(&quot;_ -&gt; !null&quot;)
+    @Nonnull
     public static &lt;T&gt; ListBuilder&lt;T&gt; create(Class&lt;T&gt; cls) {
-<span class="fc" id="L41">        return new DefaultListBuilder&lt;&gt;();</span>
+<span class="fc" id="L38">        return new DefaultListBuilder&lt;&gt;();</span>
     }
 
     /**
@@ -47,9 +44,8 @@ import java.util.*;
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract(&quot;_ -&gt; !null&quot;)
-    protected abstract ListBuilder&lt;T&gt; add(@NotNull Supplier&lt;? extends T&gt; element);
+    @Nonnull
+    protected abstract ListBuilder&lt;T&gt; add(@Nonnull Supplier&lt;? extends T&gt; element);
 
     /**
      * Helper method for adding an iterable of suppliers of elements.
@@ -58,9 +54,8 @@ import java.util.*;
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract(&quot;_ -&gt; !null&quot;)
-    protected abstract ListBuilder&lt;T&gt; addSuppliers(@NotNull Iterable&lt;? extends Supplier&lt;? extends T&gt;&gt; elements);
+    @Nonnull
+    protected abstract ListBuilder&lt;T&gt; addSuppliers(@Nonnull Iterable&lt;? extends Supplier&lt;? extends T&gt;&gt; elements);
 
     /**
      * Helper method for adding an iterator of suppliers of elements.
@@ -69,9 +64,8 @@ import java.util.*;
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract(&quot;_ -&gt; !null&quot;)
-    protected abstract ListBuilder&lt;T&gt; addSuppliers(@NotNull Iterator&lt;? extends Supplier&lt;? extends T&gt;&gt; elements);
+    @Nonnull
+    protected abstract ListBuilder&lt;T&gt; addSuppliers(@Nonnull Iterator&lt;? extends Supplier&lt;? extends T&gt;&gt; elements);
 
     /**
      * Helper method for adding an array of suppliers of elements.
@@ -80,8 +74,8 @@ import java.util.*;
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    protected abstract ListBuilder&lt;T&gt; addSuppliers(@NotNull Supplier&lt;? extends T&gt;[] elements);
+    @Nonnull
+    protected abstract ListBuilder&lt;T&gt; addSuppliers(@Nonnull Supplier&lt;? extends T&gt;[] elements);
 
     /**
      * Helper method to add the given element, if and only if the given boolean is {@code true}. Otherwise
@@ -92,8 +86,8 @@ import java.util.*;
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    protected abstract ListBuilder&lt;T&gt; maybeAdd(@NotNull Supplier&lt;? extends T&gt; element, boolean add);
+    @Nonnull
+    protected abstract ListBuilder&lt;T&gt; maybeAdd(@Nonnull Supplier&lt;? extends T&gt; element, boolean add);
 
     /**
      * Add all of the given elements, in order, to the list of values.
@@ -106,16 +100,16 @@ import java.util.*;
      * @see #addAll(Object[])
      * @see #addBuilders(Iterable)
      */
-    @NotNull
-    public ListBuilder&lt;T&gt; addAll(@NotNull Iterable&lt;? extends T&gt; elements) {
-<span class="fc" id="L111">        return addSuppliers(Iterables.transform(elements, SupplierFunctions.&lt;T&gt;supplierOfInstanceFunction()));</span>
+    @Nonnull
+    public ListBuilder&lt;T&gt; addAll(@Nonnull Iterable&lt;? extends T&gt; elements) {
+<span class="fc" id="L105">        return addSuppliers(Iterables.transform(elements, SupplierFunctions.&lt;T&gt;supplierOfInstanceFunction()));</span>
     }
 
     /**
-     * Add all of the given {@link Builder Builders}, in order, as builders of element values to the end of the list.
+     * Add all of the given {@link BuilderInterface Builders}, in order, as builders of element values to the end of the list.
      *
      * &lt;p&gt;
-     * As with {@link #add(Builder)}, this does not invoke any of the builders immediately to build the element value.
+     * As with {@link #add(BuilderInterface)}, this does not invoke any of the builders immediately to build the element value.
      * Each builder will be invoked once during a call to {@link #get()}.
      *
      * @param elements An {@link Iterable} of the builders to add.
@@ -123,13 +117,12 @@ import java.util.*;
      * @return {@code this} object itself, for chaining convenience.
      *
      * @see #addBuilders(Iterator)
-     * @see #addBuilders(Builder[])
+     * @see #addBuilders(BuilderInterface[])
      * @see #addAll(Iterable)
      */
-    @NotNull
-    @Contract(&quot;_ -&gt; !null&quot;)
-    public ListBuilder&lt;T&gt; addBuilders(@NotNull Iterable&lt;? extends Builder&lt;? extends T&gt;&gt; elements) {
-<span class="fc" id="L132">        return addSuppliers(elements);</span>
+    @Nonnull
+    public ListBuilder&lt;T&gt; addBuilders(@Nonnull Iterable&lt;? extends BuilderInterface&lt;? extends T&gt;&gt; elements) {
+<span class="fc" id="L125">        return addSuppliers(elements);</span>
     }
 
     /**
@@ -143,17 +136,16 @@ import java.util.*;
      * @see #addAll(Object[])
      * @see #addBuilders(Iterator)
      */
-    @NotNull
-    @Contract(&quot;_ -&gt; !null&quot;)
-    public ListBuilder&lt;T&gt; addAll(@NotNull Iterator&lt;? extends T&gt; elements) {
-<span class="fc" id="L149">        return addSuppliers(Iterators.transform(elements, SupplierFunctions.&lt;T&gt;supplierOfInstanceFunction()));</span>
+    @Nonnull
+    public ListBuilder&lt;T&gt; addAll(@Nonnull Iterator&lt;? extends T&gt; elements) {
+<span class="fc" id="L141">        return addSuppliers(Iterators.transform(elements, SupplierFunctions.&lt;T&gt;supplierOfInstanceFunction()));</span>
     }
 
     /**
-     * Add all of the given {@link Builder Builders}, in order, as builders of element values to the end of the list.
+     * Add all of the given {@link BuilderInterface Builders}, in order, as builders of element values to the end of the list.
      *
      * &lt;p&gt;
-     * As with {@link #add(Builder)}, this does not invoke any of the builders immediately to build the element value.
+     * As with {@link #add(BuilderInterface)}, this does not invoke any of the builders immediately to build the element value.
      * Each builder will be invoked once during a call to {@link #get()}.
      *
      * @param elements An {@link Iterator} over the builders to add.
@@ -161,13 +153,12 @@ import java.util.*;
      * @return {@code this} object itself, for chaining convenience.
      *
      * @see #addBuilders(Iterable)
-     * @see #addBuilders(Builder[])
+     * @see #addBuilders(BuilderInterface[])
      * @see #addAll(Iterator)
      */
-    @NotNull
-    @Contract(&quot;_ -&gt; !null&quot;)
-    public ListBuilder&lt;T&gt; addBuilders(@NotNull Iterator&lt;? extends Builder&lt;? extends T&gt;&gt; elements) {
-<span class="fc" id="L170">        return addSuppliers(elements);</span>
+    @Nonnull
+    public ListBuilder&lt;T&gt; addBuilders(@Nonnull Iterator&lt;? extends BuilderInterface&lt;? extends T&gt;&gt; elements) {
+<span class="fc" id="L161">        return addSuppliers(elements);</span>
     }
 
     /**
@@ -179,19 +170,18 @@ import java.util.*;
      *
      * @see #addAll(Iterable)
      * @see #addAll(Iterator)
-     * @see #addBuilders(Builder[])
+     * @see #addBuilders(BuilderInterface[])
      */
-    @NotNull
-    @Contract(&quot;_ -&gt; !null&quot;)
-    public ListBuilder&lt;T&gt; addAll(@NotNull T[] elements) {
-<span class="fc" id="L187">        return addSuppliers(Iterables.transform(Arrays.asList(elements), SupplierFunctions.&lt;T&gt;supplierOfInstanceFunction()));</span>
+    @Nonnull
+    public ListBuilder&lt;T&gt; addAll(@Nonnull T[] elements) {
+<span class="fc" id="L177">        return addSuppliers(Iterables.transform(Arrays.asList(elements), SupplierFunctions.&lt;T&gt;supplierOfInstanceFunction()));</span>
     }
 
     /**
-     * Add all of the given {@link Builder Builders}, in order, as builders of element values to the end of the list.
+     * Add all of the given {@link BuilderInterface Builders}, in order, as builders of element values to the end of the list.
      *
      * &lt;p&gt;
-     * As with {@link #add(Builder)}, this does not invoke any of the builders immediately to build the element value.
+     * As with {@link #add(BuilderInterface)}, this does not invoke any of the builders immediately to build the element value.
      * Each builder will be invoked once during a call to {@link #get()}.
      *
      * @param elements An array of the builders to add.
@@ -202,10 +192,9 @@ import java.util.*;
      * @see #addBuilders(Iterator)
      * @see #addAll(Object[])
      */
-    @NotNull
-    @Contract(&quot;_ -&gt; !null&quot;)
-    public ListBuilder&lt;T&gt; addBuilders(@NotNull Builder&lt;? extends T&gt;[] elements) {
-<span class="fc" id="L208">        return addSuppliers(elements);</span>
+    @Nonnull
+    public ListBuilder&lt;T&gt; addBuilders(@Nonnull BuilderInterface&lt;? extends T&gt;[] elements) {
+<span class="fc" id="L197">        return addSuppliers(elements);</span>
     }
 
     /**
@@ -215,25 +204,23 @@ import java.util.*;
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract(&quot;_ -&gt; !null&quot;)
+    @Nonnull
     public ListBuilder&lt;T&gt; add(@Nullable T element) {
-<span class="fc" id="L221">        return add(Suppliers.ofInstance(element));</span>
+<span class="fc" id="L209">        return add(Suppliers.ofInstance(element));</span>
     }
 
     /**
-     * Add the given {@link Builder} as a builder for the next item in the list. The builder is not invoked to build
-     * the value immediately, its {@link Builder#get()} method is invoked to build the element value only when &lt;em&gt;this&lt;/em&gt;
+     * Add the given {@link BuilderInterface} as a builder for the next item in the list. The builder is not invoked to build
+     * the value immediately, its {@link BuilderInterface#get()} method is invoked to build the element value only when &lt;em&gt;this&lt;/em&gt;
      * object's {@link #get()} method is invoked to build a list of values.
      *
      * @param elementBuilder Builder for the element to put at the end of the current list of elements.
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract(&quot;_ -&gt; !null&quot;)
-    public ListBuilder&lt;T&gt; add(@NotNull Builder&lt;? extends T&gt; elementBuilder) {
-<span class="fc" id="L236">        return add((Supplier&lt;? extends T&gt;) elementBuilder);</span>
+    @Nonnull
+    public ListBuilder&lt;T&gt; add(@Nonnull BuilderInterface&lt;? extends T&gt; elementBuilder) {
+<span class="fc" id="L223">        return add((Supplier&lt;? extends T&gt;) elementBuilder);</span>
     }
 
     /**
@@ -245,10 +232,9 @@ import java.util.*;
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract(&quot;_, _ -&gt; !null&quot;)
+    @Nonnull
     public ListBuilder&lt;T&gt; maybeAdd(@Nullable T element, boolean add) {
-<span class="fc" id="L251">        return maybeAdd(Suppliers.ofInstance(element), add);</span>
+<span class="fc" id="L237">        return maybeAdd(Suppliers.ofInstance(element), add);</span>
     }
 
     /**
@@ -256,8 +242,7 @@ import java.util.*;
      *
      * @return The built list of elements.
      */
-    @NotNull
-    @Contract(&quot;-&gt; !null&quot;)
+    @Nonnull
     @Override
     public abstract List&lt;T&gt; get() throws IncompleteBuilderException;
 
@@ -265,15 +250,14 @@ import java.util.*;
      * Adds the given element builder for the next item in the list, if and only if the
      * given boolean is {@code true}. Otherwise has no effect on the state of the builder.
      *
-     * @param element The element value to {@link #add(Builder)}.
+     * @param element The element value to {@link #add(BuilderInterface)}.
      * @param add Whether or not to add the element.
      *
      * @return {@code this} object itself, for chaining convenience.
      */
-    @NotNull
-    @Contract(&quot;_, _ -&gt; !null&quot;)
-    public ListBuilder&lt;T&gt; maybeAdd(@NotNull Builder&lt;? extends T&gt; element, boolean add) {
-<span class="fc" id="L276">        return maybeAdd((Supplier&lt;? extends T&gt;) element, add);</span>
+    @Nonnull
+    public ListBuilder&lt;T&gt; maybeAdd(@Nonnull BuilderInterface&lt;? extends T&gt; element, boolean add) {
+<span class="fc" id="L260">        return maybeAdd((Supplier&lt;? extends T&gt;) element, add);</span>
     }
 
     /**
@@ -290,14 +274,13 @@ import java.util.*;
      *
      * @return This {@code ListBuilder} itself, for chaining convenience.
      */
-    @NotNull
-    public abstract ListBuilder&lt;T&gt; apply(@NotNull Function&lt;ListBuilder&lt;T&gt;, Void&gt; function);
+    @Nonnull
+    public abstract ListBuilder&lt;T&gt; apply(@Nonnull Function&lt;ListBuilder&lt;T&gt;, Void&gt; function);
 
     /**
      * Returns the top-level non-conditional builder.
      */
-    @NotNull
-    @Contract(&quot;-&gt; !null&quot;)
+    @Nonnull
     public abstract ListBuilder&lt;T&gt; always();
 
     /**
@@ -305,31 +288,31 @@ import java.util.*;
      * @param yes If {@code true}, then methods invoked on the returned builder will modify the state of {@code this}
      *            builder. Otherwise, methods invoked on the returned builder will not modify state.
      */
-    @NotNull
+    @Nonnull
     public abstract ListBuilder&lt;T&gt; maybe(boolean yes);
 
     /**
      * Returns the parent list builder of a conditional list builder. This is not necessarily the originating top level
      * builder if you have nested (or rather chained) calls to {@link #maybe(boolean)}.
      */
-    @NotNull
+    @Nonnull
     public abstract ListBuilder&lt;T&gt; endMaybe();
 
     @SuppressWarnings(&quot;unused&quot;)
     protected static class DefaultListBuilder&lt;T&gt; extends ListBuilder&lt;T&gt; {
 
-        @NotNull
+        @Nonnull
         private final List&lt;Supplier&lt;? extends T&gt;&gt; elements;
 
         {
             //Linked list is good because we're mostly just appending to it, and then iterating through it.
             // Linked lists are pretty good at both.
-<span class="fc" id="L327">            elements = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L310">            elements = new LinkedList&lt;&gt;();</span>
         }
 
-<span class="fc" id="L330">        public DefaultListBuilder() {</span>
+<span class="fc" id="L313">        public DefaultListBuilder() {</span>
 
-<span class="fc" id="L332">        }</span>
+<span class="fc" id="L315">        }</span>
 
         /**
          * Helper method to actually build the list returned by {@link #get()}.
@@ -350,64 +333,58 @@ import java.util.*;
          *
          * @return A list that will be returned by this object's {@link #get()} method.
          */
-        @NotNull
-        @Contract(&quot;_ -&gt; !null&quot;)
-        protected List&lt;T&gt; get(@NotNull ImmutableList&lt;Supplier&lt;? extends T&gt;&gt; suppliers) {
-<span class="fc" id="L356">            ArrayList&lt;T&gt; list = new ArrayList&lt;&gt;(suppliers.size());</span>
-<span class="fc bfc" id="L357" title="All 2 branches covered.">            for (Supplier&lt;? extends T&gt; supplier : suppliers) {</span>
-<span class="fc" id="L358">                list.add(supplier.get());</span>
-<span class="fc" id="L359">            }</span>
-<span class="fc" id="L360">            return list;</span>
+        @Nonnull
+        protected List&lt;T&gt; get(@Nonnull ImmutableList&lt;Supplier&lt;? extends T&gt;&gt; suppliers) {
+<span class="fc" id="L338">            ArrayList&lt;T&gt; list = new ArrayList&lt;&gt;(suppliers.size());</span>
+<span class="fc bfc" id="L339" title="All 2 branches covered.">            for (Supplier&lt;? extends T&gt; supplier : suppliers) {</span>
+<span class="fc" id="L340">                list.add(supplier.get());</span>
+<span class="fc" id="L341">            }</span>
+<span class="fc" id="L342">            return list;</span>
         }
 
         @Override
-        @NotNull
-        @Contract(&quot;_ -&gt; !null&quot;)
-        protected ListBuilder&lt;T&gt; add(@NotNull Supplier&lt;? extends T&gt; element) {
-<span class="fc" id="L367">            elements.add(element);</span>
-<span class="fc" id="L368">            return this;</span>
+        @Nonnull
+        protected ListBuilder&lt;T&gt; add(@Nonnull Supplier&lt;? extends T&gt; element) {
+<span class="fc" id="L348">            elements.add(element);</span>
+<span class="fc" id="L349">            return this;</span>
         }
 
         @Override
-        @NotNull
-        @Contract(&quot;_ -&gt; !null&quot;)
-        protected ListBuilder&lt;T&gt; addSuppliers(@NotNull Iterable&lt;? extends Supplier&lt;? extends T&gt;&gt; elements) {
-<span class="fc" id="L375">            Iterables.addAll(this.elements, elements);</span>
-<span class="fc" id="L376">            return this;</span>
+        @Nonnull
+        protected ListBuilder&lt;T&gt; addSuppliers(@Nonnull Iterable&lt;? extends Supplier&lt;? extends T&gt;&gt; elements) {
+<span class="fc" id="L355">            Iterables.addAll(this.elements, elements);</span>
+<span class="fc" id="L356">            return this;</span>
         }
 
         @Override
-        @NotNull
-        @Contract(&quot;_ -&gt; !null&quot;)
-        protected ListBuilder&lt;T&gt; addSuppliers(@NotNull Iterator&lt;? extends Supplier&lt;? extends T&gt;&gt; elements) {
-<span class="fc bfc" id="L383" title="All 2 branches covered.">            while(elements.hasNext()) {</span>
-<span class="fc" id="L384">                this.elements.add(elements.next());</span>
+        @Nonnull
+        protected ListBuilder&lt;T&gt; addSuppliers(@Nonnull Iterator&lt;? extends Supplier&lt;? extends T&gt;&gt; elements) {
+<span class="fc bfc" id="L362" title="All 2 branches covered.">            while(elements.hasNext()) {</span>
+<span class="fc" id="L363">                this.elements.add(elements.next());</span>
             }
-<span class="fc" id="L386">            return this;</span>
+<span class="fc" id="L365">            return this;</span>
         }
 
         @Override
-        @NotNull
-        protected ListBuilder&lt;T&gt; addSuppliers(@NotNull Supplier&lt;? extends T&gt;[] elements) {
-<span class="fc" id="L392">            return addSuppliers(Arrays.asList(elements));</span>
+        @Nonnull
+        protected ListBuilder&lt;T&gt; addSuppliers(@Nonnull Supplier&lt;? extends T&gt;[] elements) {
+<span class="fc" id="L371">            return addSuppliers(Arrays.asList(elements));</span>
         }
 
         @Override
-        @NotNull
-        @Contract(&quot;_, _ -&gt; !null&quot;)
-        protected ListBuilder&lt;T&gt; maybeAdd(@NotNull Supplier&lt;? extends T&gt; element, boolean add) {
-<span class="fc bfc" id="L399" title="All 2 branches covered.">            if(add) {</span>
-<span class="fc" id="L400">                this.add(element);</span>
+        @Nonnull
+        protected ListBuilder&lt;T&gt; maybeAdd(@Nonnull Supplier&lt;? extends T&gt; element, boolean add) {
+<span class="fc bfc" id="L377" title="All 2 branches covered.">            if(add) {</span>
+<span class="fc" id="L378">                this.add(element);</span>
             }
-<span class="fc" id="L402">            return this;</span>
+<span class="fc" id="L380">            return this;</span>
         }
 
         @Override
-        @NotNull
-        @Contract(&quot;_ -&gt; !null&quot;)
-        public ListBuilder&lt;T&gt; apply(@NotNull Function&lt;ListBuilder&lt;T&gt;, Void&gt; function) {
-<span class="fc" id="L409">            function.apply(this);</span>
-<span class="fc" id="L410">            return this;</span>
+        @Nonnull
+        public ListBuilder&lt;T&gt; apply(@Nonnull Function&lt;ListBuilder&lt;T&gt;, Void&gt; function) {
+<span class="fc" id="L386">            function.apply(this);</span>
+<span class="fc" id="L387">            return this;</span>
         }
 
         /**
@@ -419,40 +396,38 @@ import java.util.*;
          *
          * @return The built list of elements.
          */
-        @NotNull
+        @Nonnull
         @Override
         public List&lt;T&gt; get() throws IncompleteBuilderException {
-<span class="fc" id="L425">            return get(ImmutableList.copyOf(elements));</span>
+<span class="fc" id="L402">            return get(ImmutableList.copyOf(elements));</span>
         }
 
         /**
          * Returns itself.
          */
         @Override
-        @NotNull
-        @Contract(pure=true)
+        @Nonnull
         public ListBuilder&lt;T&gt; always() {
-<span class="fc" id="L435">            return this;</span>
+<span class="fc" id="L411">            return this;</span>
         }
 
         /**
          * Returns either {@code this} object itself, or a new {@link NeverListBuilder} if {@code yes} is {@code false}.
          */
         @Override
-        @NotNull
+        @Nonnull
         public ListBuilder&lt;T&gt; maybe(boolean yes) {
-<span class="fc bfc" id="L444" title="All 2 branches covered.">            if(yes) {</span>
-<span class="fc" id="L445">                return this;</span>
+<span class="fc bfc" id="L420" title="All 2 branches covered.">            if(yes) {</span>
+<span class="fc" id="L421">                return this;</span>
             } else {
-<span class="fc" id="L447">                return new NeverListBuilder&lt;&gt;(this, this);</span>
+<span class="fc" id="L423">                return new NeverListBuilder&lt;&gt;(this, this);</span>
             }
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        @Contract(pure=true)
         public ListBuilder&lt;T&gt; endMaybe() {
-<span class="fc" id="L455">            return this;</span>
+<span class="fc" id="L430">            return this;</span>
         }
 
     }
@@ -460,71 +435,65 @@ import java.util.*;
     /**
      * A {@link ListBuilder} which doesn't actually do anything.
      */
-<span class="fc" id="L463">    protected static class NeverListBuilder&lt;T&gt; extends ListBuilder&lt;T&gt; {</span>
+<span class="fc" id="L438">    protected static class NeverListBuilder&lt;T&gt; extends ListBuilder&lt;T&gt; {</span>
 
-        @NotNull
+        @Nonnull
         private final ListBuilder&lt;T&gt; alwaysBuilder;
 
-        @NotNull
+        @Nonnull
         private final ListBuilder&lt;T&gt; parent;
 
-<span class="fc" id="L471">        protected NeverListBuilder(@NotNull ListBuilder&lt;T&gt; alwaysBuilder, @NotNull ListBuilder&lt;T&gt; parent) {</span>
-<span class="fc" id="L472">            this.alwaysBuilder = alwaysBuilder;</span>
-<span class="fc" id="L473">            this.parent = parent;</span>
-<span class="fc" id="L474">        }</span>
+<span class="fc" id="L446">        protected NeverListBuilder(@Nonnull ListBuilder&lt;T&gt; alwaysBuilder, @Nonnull ListBuilder&lt;T&gt; parent) {</span>
+<span class="fc" id="L447">            this.alwaysBuilder = alwaysBuilder;</span>
+<span class="fc" id="L448">            this.parent = parent;</span>
+<span class="fc" id="L449">        }</span>
 
         @Override
-        @NotNull
-        @Contract(pure=true)
-        protected ListBuilder&lt;T&gt; add(@NotNull Supplier&lt;? extends T&gt; element) {
-<span class="fc" id="L480">            return this;</span>
+        @Nonnull
+        protected ListBuilder&lt;T&gt; add(@Nonnull Supplier&lt;? extends T&gt; element) {
+<span class="fc" id="L454">            return this;</span>
         }
 
         @Override
-        @NotNull
-        @Contract(pure=true)
-        protected ListBuilder&lt;T&gt; addSuppliers(@NotNull Iterable&lt;? extends Supplier&lt;? extends T&gt;&gt; elements) {
-<span class="fc" id="L487">            return this;</span>
+        @Nonnull
+        protected ListBuilder&lt;T&gt; addSuppliers(@Nonnull Iterable&lt;? extends Supplier&lt;? extends T&gt;&gt; elements) {
+<span class="fc" id="L460">            return this;</span>
         }
 
         @Override
-        @NotNull
-        @Contract(pure=true)
-        protected ListBuilder&lt;T&gt; addSuppliers(@NotNull Iterator&lt;? extends Supplier&lt;? extends T&gt;&gt; elements) {
-<span class="fc" id="L494">            return this;</span>
+        @Nonnull
+        protected ListBuilder&lt;T&gt; addSuppliers(@Nonnull Iterator&lt;? extends Supplier&lt;? extends T&gt;&gt; elements) {
+<span class="fc" id="L466">            return this;</span>
         }
 
         @Override
-        @NotNull
-        @Contract(pure=true)
-        protected ListBuilder&lt;T&gt; addSuppliers(@NotNull Supplier&lt;? extends T&gt;[] elements) {
-<span class="fc" id="L501">            return this;</span>
+        @Nonnull
+        protected ListBuilder&lt;T&gt; addSuppliers(@Nonnull Supplier&lt;? extends T&gt;[] elements) {
+<span class="fc" id="L472">            return this;</span>
         }
 
         @Override
-        @NotNull
-        @Contract(pure=true)
-        protected ListBuilder&lt;T&gt; maybeAdd(@NotNull Supplier&lt;? extends T&gt; element, boolean add) {
-<span class="fc" id="L508">            return this;</span>
+        @Nonnull
+        protected ListBuilder&lt;T&gt; maybeAdd(@Nonnull Supplier&lt;? extends T&gt; element, boolean add) {
+<span class="fc" id="L478">            return this;</span>
         }
 
         /**
          * Note that the never build &lt;em&gt;does not&lt;/em&gt; invoke the given function at all, it simply returns itself, as usual.
          */
-        @NotNull
+        @Nonnull
         @Override
-        public ListBuilder&lt;T&gt; apply(@NotNull Function&lt;ListBuilder&lt;T&gt;, Void&gt; function) {
-<span class="fc" id="L517">            return this;</span>
+        public ListBuilder&lt;T&gt; apply(@Nonnull Function&lt;ListBuilder&lt;T&gt;, Void&gt; function) {
+<span class="fc" id="L487">            return this;</span>
         }
 
         /**
          * Returns the originating (non-conditional) list builder.
          */
         @Override
-        @NotNull
-        @Contract(pure=true)
+        @Nonnull
         public ListBuilder&lt;T&gt; always() {
-<span class="fc" id="L527">            return alwaysBuilder;</span>
+<span class="fc" id="L496">            return alwaysBuilder;</span>
         }
 
         /**
@@ -533,25 +502,23 @@ import java.util.*;
          * one is, the aggregate is false.
          */
         @Override
-        @NotNull
-        @Contract(pure=true)
+        @Nonnull
         public ListBuilder&lt;T&gt; maybe(boolean yes) {
-<span class="fc" id="L539">            return new NeverListBuilder&lt;&gt;(alwaysBuilder, this);</span>
+<span class="fc" id="L507">            return new NeverListBuilder&lt;&gt;(alwaysBuilder, this);</span>
         }
 
-        @NotNull
-        @Contract(pure=true)
+        @Nonnull
         public ListBuilder&lt;T&gt; endMaybe() {
-<span class="fc" id="L545">            return parent;</span>
+<span class="fc" id="L512">            return parent;</span>
         }
 
         /**
          * Delegates to the originating (non-conditional) list builder.
          */
         @Override
-        @NotNull
+        @Nonnull
         public List&lt;T&gt; get() throws IncompleteBuilderException {
-<span class="fc" id="L554">            return alwaysBuilder.get();</span>
+<span class="fc" id="L521">            return alwaysBuilder.get();</span>
         }
     }
 

@@ -3,14 +3,16 @@
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
- * A {@link Builder} of {@linkplain Map map} objects.
+ * A {@link BuilderInterface} of {@linkplain Map map} objects.
  *
  * &lt;p&gt;
  * Map elements are {@linkplain #put(Object, Object) put} into the builder as a key and its value. Putting the same
@@ -20,7 +22,7 @@ import java.util.*;
  * @author Brian Mearns &lt;bmearns@ieee.org&gt;
  */
 @SuppressWarnings(&quot;unused&quot;)
-<span class="fc" id="L23">public abstract class MapBuilder&lt;K, V&gt; implements Builder&lt;Map&lt;K,V&gt;&gt; {</span>
+<span class="fc" id="L25">public abstract class MapBuilder&lt;K, V&gt; implements BuilderInterface&lt;Map&lt;K,V&gt;&gt; {</span>
 
     /**
      * Create a new builder instance which will build {@link Map Map&lt;K,V&gt;} instances.
@@ -30,10 +32,9 @@ import java.util.*;
      *
      * @return The newly constructed {@link MapBuilder}.
      */
-    @NotNull
-    @Contract(&quot;-&gt; !null&quot;)
+    @Nonnull
     public static &lt;K,V&gt; MapBuilder&lt;K,V&gt; create() {
-<span class="fc" id="L36">        return new DefaultMapBuilder&lt;&gt;();</span>
+<span class="fc" id="L37">        return new DefaultMapBuilder&lt;&gt;();</span>
     }
 
     /**
@@ -53,11 +54,9 @@ import java.util.*;
      *
      * @return The newly constructed {@link MapBuilder}.
      */
-    @NotNull
-    @Contract(&quot;_, _ -&gt; !null&quot;)
-    @SuppressWarnings(&quot;unused&quot;)
-    public static &lt;K,V&gt; MapBuilder&lt;K,V&gt; create(@NotNull Class&lt;K&gt; keyCls, @NotNull Class&lt;V&gt; valueCls) {
-<span class="fc" id="L60">        return new DefaultMapBuilder&lt;&gt;();</span>
+    @Nonnull
+    public static &lt;K,V&gt; MapBuilder&lt;K,V&gt; create(@Nonnull Class&lt;K&gt; keyCls, @Nonnull Class&lt;V&gt; valueCls) {
+<span class="fc" id="L59">        return new DefaultMapBuilder&lt;&gt;();</span>
     }
 
     /**
@@ -66,7 +65,7 @@ import java.util.*;
      * @param key The key to add (or replace) in the map.
      * @param valueSupplier A {@link Supplier} for the value to put in the map.
      */
-    protected abstract void putSupplier(@Nullable K key, @NotNull Supplier&lt;? extends V&gt; valueSupplier);
+    protected abstract void putSupplier(@Nullable K key, @Nonnull Supplier&lt;? extends V&gt; valueSupplier);
 
     /**
      * Put the given value in the builder's map.
@@ -77,15 +76,15 @@ import java.util.*;
      * @return This builder instance itself, for chaining convenience.
      */
     public MapBuilder&lt;K,V&gt; put(@Nullable K key, @Nullable V value) {
-<span class="fc" id="L80">        putSupplier(key, Suppliers.ofInstance(value));</span>
-<span class="fc" id="L81">        return this;</span>
+<span class="fc" id="L79">        putSupplier(key, Suppliers.ofInstance(value));</span>
+<span class="fc" id="L80">        return this;</span>
     }
 
     /**
-     * Put a value in the builder's map, represented by a Builder of that value.
+     * Put a value in the builder's map, represented by a BuilderInterface of that value.
      *
      * &lt;p&gt;
-     * Note that the given Builder is not {@linkplain Builder#get() invoked} to build the value
+     * Note that the given builder is not {@linkplain BuilderInterface#get() invoked} to build the value
      * right away, it is invoked once for each call to {@link #get()}.
      *
      * @param key The key at which to put the {@code value}.
@@ -93,9 +92,9 @@ import java.util.*;
      *
      * @return This builder instance itself, for chaining convenience.
      */
-    public MapBuilder&lt;K,V&gt; put(@Nullable K key, @NotNull Builder&lt;? extends V&gt; value) {
-<span class="fc" id="L97">        putSupplier(key, value);</span>
-<span class="fc" id="L98">        return this;</span>
+    public MapBuilder&lt;K,V&gt; put(@Nullable K key, @Nonnull BuilderInterface&lt;? extends V&gt; value) {
+<span class="fc" id="L96">        putSupplier(key, value);</span>
+<span class="fc" id="L97">        return this;</span>
     }
 
     /**
@@ -109,10 +108,10 @@ import java.util.*;
      * @return This builder instance itself, for chaining convenience.
      */
     public MapBuilder&lt;K,V&gt; maybePut(@Nullable K key, @Nullable V value, boolean put) {
-<span class="fc bfc" id="L112" title="All 2 branches covered.">        if(put) {</span>
-<span class="fc" id="L113">            putSupplier(key, Suppliers.ofInstance(value));</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if(put) {</span>
+<span class="fc" id="L112">            putSupplier(key, Suppliers.ofInstance(value));</span>
         }
-<span class="fc" id="L115">        return this;</span>
+<span class="fc" id="L114">        return this;</span>
     }
 
     /**
@@ -125,11 +124,11 @@ import java.util.*;
      *
      * @return This builder instance itself, for chaining convenience.
      */
-    public MapBuilder&lt;K,V&gt; maybePut(@Nullable K key, @NotNull Builder&lt;? extends V&gt; value, boolean put) {
-<span class="fc bfc" id="L129" title="All 2 branches covered.">        if(put) {</span>
-<span class="fc" id="L130">            putSupplier(key, value);</span>
+    public MapBuilder&lt;K,V&gt; maybePut(@Nullable K key, @Nonnull BuilderInterface&lt;? extends V&gt; value, boolean put) {
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        if(put) {</span>
+<span class="fc" id="L129">            putSupplier(key, value);</span>
         }
-<span class="fc" id="L132">        return this;</span>
+<span class="fc" id="L131">        return this;</span>
     }
 
     /**
@@ -149,53 +148,52 @@ import java.util.*;
     public abstract MapBuilder&lt;K,V&gt; apply(Function&lt;MapBuilder&lt;K,V&gt;, Void&gt; function);
 
     @Override
-    @NotNull
+    @Nonnull
     public abstract Map&lt;K, V&gt; get() throws IncompleteBuilderException;
 
 
-    @NotNull
+    @Nonnull
     public abstract MapBuilder&lt;K, V&gt; maybe(boolean yes);
 
-    @NotNull
+    @Nonnull
     public abstract MapBuilder&lt;K, V&gt; endMaybe();
 
-    @NotNull
+    @Nonnull
     public abstract MapBuilder&lt;K, V&gt; always();
 
     protected static class DefaultMapBuilder&lt;K, V&gt; extends MapBuilder&lt;K, V&gt; {
-        @NotNull
+        @Nonnull
         private List&lt;Entry&lt;K,V&gt;&gt; entries;
 
-<span class="fc" id="L169">        public DefaultMapBuilder() {</span>
-<span class="fc" id="L170">            entries = new LinkedList&lt;&gt;();</span>
-<span class="fc" id="L171">        }</span>
+<span class="fc" id="L168">        public DefaultMapBuilder() {</span>
+<span class="fc" id="L169">            entries = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L170">        }</span>
 
         @Override
-        @NotNull
-        @Contract(&quot;-&gt; !null&quot;)
+        @Nonnull
         public Map&lt;K, V&gt; get() throws IncompleteBuilderException {
-<span class="fc" id="L177">            return buildMap(entries);</span>
+<span class="fc" id="L175">            return buildMap(entries);</span>
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public MapBuilder&lt;K, V&gt; maybe(boolean yes) {
-<span class="fc bfc" id="L183" title="All 2 branches covered.">            if(yes) {</span>
-<span class="fc" id="L184">                return this;</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">            if(yes) {</span>
+<span class="fc" id="L182">                return this;</span>
             }
-<span class="fc" id="L186">            return new NeverMapBuilder&lt;&gt;(this, this);</span>
+<span class="fc" id="L184">            return new NeverMapBuilder&lt;&gt;(this, this);</span>
         }
 
         @Override
-        @NotNull
+        @Nonnull
         public MapBuilder&lt;K, V&gt; endMaybe() {
-<span class="fc" id="L192">            return this;</span>
+<span class="fc" id="L190">            return this;</span>
         }
 
         @Override
-        @NotNull
+        @Nonnull
         public MapBuilder&lt;K, V&gt; always() {
-<span class="fc" id="L198">            return this;</span>
+<span class="fc" id="L196">            return this;</span>
         }
 
         /**
@@ -205,13 +203,13 @@ import java.util.*;
          *
          * This will typically delegate to {@link #createMap(int)}.
          */
-        @NotNull
-        protected Map&lt;K, V&gt; buildMap(@NotNull List&lt;Entry&lt;K,V&gt;&gt; entries) {
-<span class="fc" id="L210">            Map&lt;K,V&gt; map = createMap(entries.size());</span>
-<span class="fc bfc" id="L211" title="All 2 branches covered.">            for(Entry&lt;K,V&gt; entry : entries) {</span>
-<span class="fc" id="L212">                map.put(entry.getKey(), entry.getValue());</span>
-<span class="fc" id="L213">            }</span>
-<span class="fc" id="L214">            return map;</span>
+        @Nonnull
+        protected Map&lt;K, V&gt; buildMap(@Nonnull List&lt;Entry&lt;K,V&gt;&gt; entries) {
+<span class="fc" id="L208">            Map&lt;K,V&gt; map = createMap(entries.size());</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">            for(Entry&lt;K,V&gt; entry : entries) {</span>
+<span class="fc" id="L210">                map.put(entry.getKey(), entry.getValue());</span>
+<span class="fc" id="L211">            }</span>
+<span class="fc" id="L212">            return map;</span>
         }
 
         /**
@@ -220,91 +218,91 @@ import java.util.*;
          *
          * @param size The approximate number of entries that the map will need to hold initially.
          */
-        @NotNull
+        @Nonnull
         protected Map&lt;K, V&gt; createMap(int size) {
-<span class="fc" id="L225">            return new HashMap&lt;&gt;(size);</span>
+<span class="fc" id="L223">            return new HashMap&lt;&gt;(size);</span>
         }
 
         @Override
-        protected void putSupplier(@Nullable K key, @NotNull Supplier&lt;? extends V&gt; valueSupplier) {
-<span class="fc" id="L230">            entries.add(new Entry&lt;&gt;(key, valueSupplier));</span>
-<span class="fc" id="L231">        }</span>
+        protected void putSupplier(@Nullable K key, @Nonnull Supplier&lt;? extends V&gt; valueSupplier) {
+<span class="fc" id="L228">            entries.add(new Entry&lt;&gt;(key, valueSupplier));</span>
+<span class="fc" id="L229">        }</span>
 
         @Override
         public MapBuilder&lt;K,V&gt; apply(Function&lt;MapBuilder&lt;K,V&gt;, Void&gt; function) {
-<span class="fc" id="L235">            function.apply(this);</span>
-<span class="fc" id="L236">            return this;</span>
+<span class="fc" id="L233">            function.apply(this);</span>
+<span class="fc" id="L234">            return this;</span>
         }
 
         private static class Entry&lt;K,V&gt; {
             @Nullable
             private final K key;
 
-            @NotNull
+            @Nonnull
             private final Supplier&lt;? extends V&gt; value;
 
-<span class="fc" id="L246">            protected Entry(@Nullable K key, @NotNull Supplier&lt;? extends V&gt; value) {</span>
-<span class="fc" id="L247">                this.key = key;</span>
-<span class="fc" id="L248">                this.value = value;</span>
-<span class="fc" id="L249">            }</span>
+<span class="fc" id="L244">            protected Entry(@Nullable K key, @Nonnull Supplier&lt;? extends V&gt; value) {</span>
+<span class="fc" id="L245">                this.key = key;</span>
+<span class="fc" id="L246">                this.value = value;</span>
+<span class="fc" id="L247">            }</span>
 
             @Nullable
             public K getKey() {
-<span class="fc" id="L253">                return key;</span>
+<span class="fc" id="L251">                return key;</span>
             }
 
             @Nullable
             public V getValue() {
-<span class="fc" id="L258">                return value.get();</span>
+<span class="fc" id="L256">                return value.get();</span>
             }
         }
     }
 
-<span class="fc" id="L263">    protected static class NeverMapBuilder&lt;K, V&gt; extends MapBuilder&lt;K, V&gt; {</span>
+<span class="fc" id="L261">    protected static class NeverMapBuilder&lt;K, V&gt; extends MapBuilder&lt;K, V&gt; {</span>
 
-        @NotNull
+        @Nonnull
         private final MapBuilder&lt;K, V&gt; alwaysBuilder;
 
-        @NotNull
+        @Nonnull
         private final MapBuilder&lt;K, V&gt; parent;
 
-<span class="fc" id="L271">        protected NeverMapBuilder(@NotNull MapBuilder&lt;K, V&gt; alwaysBuilder, @NotNull MapBuilder&lt;K, V&gt; parent) {</span>
-<span class="fc" id="L272">            this.alwaysBuilder = alwaysBuilder;</span>
-<span class="fc" id="L273">            this.parent = parent;</span>
-<span class="fc" id="L274">        }</span>
+<span class="fc" id="L269">        protected NeverMapBuilder(@Nonnull MapBuilder&lt;K, V&gt; alwaysBuilder, @Nonnull MapBuilder&lt;K, V&gt; parent) {</span>
+<span class="fc" id="L270">            this.alwaysBuilder = alwaysBuilder;</span>
+<span class="fc" id="L271">            this.parent = parent;</span>
+<span class="fc" id="L272">        }</span>
 
         @Override
-        protected void putSupplier(@Nullable K key, @NotNull Supplier&lt;? extends V&gt; valueSupplier) {
+        protected void putSupplier(@Nullable K key, @Nonnull Supplier&lt;? extends V&gt; valueSupplier) {
             //Do nothing;
-<span class="fc" id="L279">        }</span>
+<span class="fc" id="L277">        }</span>
 
         @Override
         public MapBuilder&lt;K, V&gt; apply(Function&lt;MapBuilder&lt;K, V&gt;, Void&gt; function) {
-<span class="fc" id="L283">            return this;</span>
+<span class="fc" id="L281">            return this;</span>
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public Map&lt;K, V&gt; get() throws IncompleteBuilderException {
-<span class="fc" id="L289">            return alwaysBuilder.get();</span>
+<span class="fc" id="L287">            return alwaysBuilder.get();</span>
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public MapBuilder&lt;K, V&gt; maybe(boolean yes) {
-<span class="fc" id="L295">            return new NeverMapBuilder&lt;&gt;(alwaysBuilder, this);</span>
+<span class="fc" id="L293">            return new NeverMapBuilder&lt;&gt;(alwaysBuilder, this);</span>
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public MapBuilder&lt;K, V&gt; endMaybe() {
-<span class="fc" id="L301">            return parent;</span>
+<span class="fc" id="L299">            return parent;</span>
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public MapBuilder&lt;K, V&gt; always() {
-<span class="fc" id="L307">            return alwaysBuilder;</span>
+<span class="fc" id="L305">            return alwaysBuilder;</span>
         }
     }
 }

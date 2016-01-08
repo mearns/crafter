@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SupplierFunctions.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">crafter</a> &gt; <a href="index.source.html" class="el_package">com.brianmearns.crafter.util</a> &gt; <span class="el_source">SupplierFunctions.java</span></div><h1>SupplierFunctions.java</h1><pre class="source lang-java linenums">package com.brianmearns.crafter.util;
 
-import com.brianmearns.crafter.Builder;
+import com.brianmearns.crafter.BuilderInterface;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+
 
 /**
  * @author Brian Mearns &lt;bmearns@ieee.org&gt;
  */
 @SuppressWarnings(&quot;unused&quot;)
-<span class="fc" id="L15">public abstract class SupplierFunctions {</span>
+<span class="fc" id="L17">public abstract class SupplierFunctions {</span>
 
 
     /**
@@ -24,14 +26,12 @@ import org.jetbrains.annotations.Nullable;
      * @return A new {@link SupplierOfInstanceFunction} which transforms an instance into a {@link Supplier}
      * of that instance.
      */
-    @NotNull
-    @Contract(&quot; -&gt; !null&quot;)
+    @Nonnull
     public static &lt;T&gt; SupplierOfInstanceFunction&lt;T&gt; supplierOfInstanceFunction() {
-<span class="fc" id="L30">        return new SupplierOfInstanceFunction&lt;&gt;();</span>
+<span class="fc" id="L31">        return new SupplierOfInstanceFunction&lt;&gt;();</span>
     }
 
-    @NotNull
-    @Contract(&quot; -&gt; !null&quot;)
+    @Nonnull
     public static &lt;T&gt; BuilderToSupplierFunction&lt;T&gt; builderToSupplierFunction() {
 <span class="fc" id="L36">        return new BuilderToSupplierFunction&lt;&gt;();</span>
     }
@@ -45,24 +45,22 @@ import org.jetbrains.annotations.Nullable;
      *           method.
      */
 <span class="fc" id="L47">    public static class SupplierOfInstanceFunction&lt;T&gt; implements Function&lt;T, Supplier&lt;T&gt;&gt; {</span>
-        @NotNull
+        @Nonnull
         @Override
-        @Contract(&quot;_ -&gt; !null&quot;)
         public Supplier&lt;T&gt; apply(@Nullable T input) {
-<span class="fc" id="L52">            return Suppliers.ofInstance(input);</span>
+<span class="fc" id="L51">            return Suppliers.ofInstance(input);</span>
         }
     }
 
     /**
-     * Function required for type conversion from {@link Builder} to {@link Supplier}, which simply returns any
-     * {@link Builder} given to it.
+     * Function required for type conversion from {@link BuilderInterface} to {@link Supplier}, which simply returns any
+     * {@link BuilderInterface} given to it.
      */
-<span class="fc" id="L60">    public static class BuilderToSupplierFunction&lt;T&gt; implements Function&lt;Builder&lt;T&gt;, Supplier&lt;T&gt;&gt; {</span>
+<span class="fc" id="L59">    public static class BuilderToSupplierFunction&lt;T&gt; implements Function&lt;BuilderInterface&lt;T&gt;, Supplier&lt;T&gt;&gt; {</span>
         @Override
         @Nullable
-        @Contract(value=&quot;null -&gt; null; !null -&gt; !null&quot;, pure=true)
-        public Supplier&lt;T&gt; apply(@Nullable Builder&lt;T&gt; input) {
-<span class="fc" id="L65">            return input;</span>
+        public Supplier&lt;T&gt; apply(@Nullable BuilderInterface&lt;T&gt; input) {
+<span class="fc" id="L63">            return input;</span>
         }
     }
 }
